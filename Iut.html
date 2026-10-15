@@ -1,0 +1,2905 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ابزارآلات دانشگاه صنعتی اصفهان | IUT Student Suite Ultimate</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=Orbitron:wght@600;700;900&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    :root {
+      --bg-base: #060b16;
+      --bg-surface: #0d1526;
+      --bg-card: #131f37;
+      --border-color: #1e293b;
+      --border-accent: #1e3a8a;
+      --primary: #1d4ed8;
+      --primary-hover: #2563eb;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.18);
+      --danger: #f43f5e;
+      --warning: #fbbf24;
+      --success: #10b981;
+      --purple: #a855f7;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --hour-w: 80px;
+      --scrollbar-bg: #080d1a;
+      --scrollbar-thumb: #1e3a8a;
+      --scrollbar-thumb-hover: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-bg);
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+
+    *::-webkit-scrollbar { width: 6px; height: 6px; }
+    *::-webkit-scrollbar-track { background: var(--scrollbar-bg); border-radius: 8px; }
+    *::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 8px; }
+    *::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background-color: var(--bg-base);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(29, 78, 216, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.06) 0%, transparent 40%);
+      color: var(--text-main);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+    }
+    @media (max-width: 860px) {
+      #sidebar { position: fixed !important; right: 0; top: 0; bottom: 0; height: 100%; box-shadow: -10px 0 30px rgba(0,0,0,0.7); }
+      #sidebar:not(.hidden) + .sidebar-backdrop { display: block; }
+    }
+
+    #sidebar {
+      width: 272px;
+      background: linear-gradient(180deg, #0d1627 0%, #09101d 100%);
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--border-color);
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), margin-right 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 100;
+      flex-shrink: 0;
+    }
+    #sidebar.hidden { transform: translateX(100%); margin-right: -272px; }
+    @media (max-width: 860px) { #sidebar.hidden { margin-right: 0; } }
+
+    .sidebar-header {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .iut-badge {
+      display: flex; align-items: center; justify-content: center;
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, #1e40af, #0284c7);
+      border-radius: 10px; border: 1px solid var(--accent);
+      font-weight: 900; font-size: 0.95rem; letter-spacing: 1px; color: #fff;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4); flex-shrink: 0;
+    }
+    .sidebar-title { font-size: 0.92rem; font-weight: 800; color: var(--text-main); }
+    .sidebar-subtitle { font-size: 0.72rem; color: var(--accent); margin-top: 2px; }
+
+    .nav-list { list-style: none; padding: 12px 10px; overflow-y: auto; flex-grow: 1; }
+    .nav-section-title {
+      font-size: 0.68rem; font-weight: 700; color: var(--text-muted);
+      padding: 8px 10px 6px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .nav-item {
+      padding: 9px 12px; border-radius: 8px; cursor: pointer; margin-bottom: 4px;
+      color: var(--text-muted); font-size: 0.82rem; font-weight: 600;
+      transition: all 0.2s ease; display: flex; align-items: center;
+      justify-content: space-between; border: 1px solid transparent;
+    }
+    .nav-item:hover { background-color: rgba(30, 58, 138, 0.28); color: var(--text-main); border-color: rgba(56, 189, 248, 0.15); }
+    .nav-item.active {
+      background: linear-gradient(90deg, #1e40af, #1d4ed8); color: #fff;
+      font-weight: 700; border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.35);
+    }
+    .nav-badge {
+      font-size: 0.65rem; background: rgba(56, 189, 248, 0.15); color: var(--accent);
+      padding: 1px 6px; border-radius: 5px; font-weight: 700;
+    }
+    .nav-item.active .nav-badge { background: rgba(255,255,255,0.22); color: #fff; }
+
+    .sidebar-footer {
+      padding: 12px 14px; border-top: 1px solid var(--border-color);
+      background: rgba(8, 12, 20, 0.6); display: flex; flex-direction: column; gap: 6px;
+    }
+    .backup-btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .btn-mini-backup {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      color: var(--text-muted); font-size: 0.7rem; font-weight: 600;
+      padding: 6px 8px; border-radius: 6px; cursor: pointer; transition: 0.2s;
+    }
+    .btn-mini-backup:hover { border-color: var(--accent); color: #fff; background: rgba(56, 189, 248, 0.1); }
+
+    #main-content { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+    header {
+      padding: 11px 24px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(11, 19, 41, 0.95) 100%);
+      border-bottom: 1px solid var(--border-accent);
+      box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.6);
+      display: flex; align-items: center; justify-content: space-between; z-index: 10; gap: 12px;
+    }
+    .header-right, .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-date-badge {
+      background: rgba(19, 31, 55, 0.7); border: 1px solid var(--border-color);
+      border-radius: 8px; padding: 5px 12px; font-size: 0.76rem; font-weight: 600; color: #cbd5e1;
+    }
+    @media (max-width: 640px) { .header-date-badge { display: none; } header { padding: 10px 14px; } }
+
+    .header-clock-box {
+      background: #080c14; border: 1px solid var(--border-accent);
+      border-radius: 8px; padding: 4px 12px; display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+    }
+    .header-clock-digits { font-family: 'Orbitron', monospace; font-size: 1rem; font-weight: 800; color: #fff; letter-spacing: 1px; }
+
+    .menu-btn {
+      background: #131f37; border: 1px solid var(--border-accent);
+      width: 38px; height: 38px; border-radius: 8px; cursor: pointer;
+      display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 4px; transition: 0.3s;
+    }
+    .menu-btn:hover { border-color: var(--accent); box-shadow: 0 0 10px rgba(56, 189, 248, 0.25); }
+    .menu-btn span { display: block; width: 2px; height: 17px; background-color: var(--accent); border-radius: 2px; transition: 0.3s; }
+    .menu-btn.closed { flex-direction: column; gap: 5px; }
+    .menu-btn.closed span { width: 17px; height: 2px; background-color: var(--text-main); }
+
+    .header-title-text { font-size: 1rem; font-weight: 800; color: #fff; }
+    .content-area { padding: 22px 26px; overflow-y: auto; flex-grow: 1; }
+    @media (max-width: 600px) { .content-area { padding: 14px; } }
+
+    .tool-section { display: none; animation: fadeIn 0.22s ease-in-out; max-width: 1550px; margin: 0 auto; }
+    .tool-section.active { display: block; }
+
+    /* یادآور رزرو غذا (اتوماسیون ستاره) */
+    .dining-alert-banner {
+      background: linear-gradient(135deg, rgba(19, 31, 55, 0.9), rgba(11, 19, 41, 0.95));
+      border: 1px solid var(--border-accent); border-radius: 12px;
+      padding: 12px 18px; margin-bottom: 16px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .dining-alert-banner.urgent {
+      background: linear-gradient(135deg, rgba(180, 83, 9, 0.32), rgba(15, 23, 42, 0.96));
+      border-color: var(--warning);
+      animation: pulseWarning 2s infinite;
+    }
+    @keyframes pulseWarning {
+      0%, 100% { box-shadow: 0 0 10px rgba(251, 191, 36, 0.18); }
+      50% { box-shadow: 0 0 24px rgba(251, 191, 36, 0.45); }
+    }
+    .dining-alert-info { display: flex; align-items: center; gap: 10px; font-size: 0.83rem; font-weight: 600; }
+    .dining-pulse-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); flex-shrink: 0; }
+    .dining-alert-banner.urgent .dining-pulse-dot { background: var(--warning); box-shadow: 0 0 12px var(--warning); }
+
+    /* میز کار */
+    .hero-banner {
+      background: linear-gradient(135deg, #172554 0%, #0b1329 100%);
+      border: 1px solid var(--border-accent); border-radius: 13px;
+      padding: 22px 26px; margin-bottom: 18px; position: relative; overflow: hidden;
+    }
+    .hero-banner::after {
+      content: "IUT"; position: absolute; left: 20px; bottom: -25px;
+      font-size: 7rem; font-weight: 900; color: rgba(255,255,255,0.025); pointer-events: none; font-family: 'Orbitron', sans-serif;
+    }
+    .hero-title { font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .hero-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; max-width: 720px; }
+
+    .home-stats-strip {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 12px; margin-bottom: 20px;
+    }
+    .home-stat-pill {
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: 10px; padding: 12px 15px; display: flex; align-items: center;
+      justify-content: space-between; cursor: pointer; transition: 0.2s;
+    }
+    .home-stat-pill:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .home-stat-label { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
+    .home-stat-val { font-size: 0.96rem; font-weight: 800; color: var(--accent); margin-top: 3px; }
+
+    .section-title {
+      font-size: 0.92rem; font-weight: 700; margin: 20px 0 12px; color: #e2e8f0;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-title::before { content: ""; width: 4px; height: 14px; background-color: var(--accent); border-radius: 2px; }
+
+    .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+    .card {
+      background-color: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: 12px; padding: 18px; transition: all 0.2s;
+    }
+    .card:hover { border-color: var(--border-accent); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.3); }
+    .card-title { font-size: 0.92rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
+    .card-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 14px; }
+    .card-btn {
+      display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px;
+      background-color: var(--bg-card); border: 1px solid var(--border-accent);
+      color: var(--accent); border-radius: 6px; font-size: 0.76rem; font-weight: 700; cursor: pointer; transition: 0.2s;
+    }
+    .card-btn:hover { background-color: var(--primary); color: #fff; border-color: var(--accent); }
+
+    .quick-links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+    .link-box {
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      padding: 12px 15px; border-radius: 9px; display: flex; justify-content: space-between;
+      align-items: center; text-decoration: none; color: var(--text-main); font-size: 0.82rem; font-weight: 700; transition: 0.2s;
+    }
+    .link-box:hover { border-color: var(--accent); background-color: var(--bg-card); }
+    .link-box span { font-size: 0.7rem; color: var(--accent); font-family: monospace; background: rgba(56, 189, 248, 0.08); padding: 2px 6px; border-radius: 4px; }
+
+    .sso-hero-card {
+      margin-top: 18px; background: linear-gradient(135deg, #0d1e3d 0%, #091322 100%);
+      border: 1px solid #1e40af; border-radius: 12px; padding: 14px 20px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; position: relative; overflow: hidden;
+    }
+    .sso-hero-card::before { content: ""; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: linear-gradient(180deg, #38bdf8, #1d4ed8); }
+    .sso-info { display: flex; flex-direction: column; gap: 4px; }
+    .sso-header-row { display: flex; align-items: center; gap: 8px; }
+    .sso-title { font-size: 0.92rem; font-weight: 800; color: #fff; }
+    .sso-badge { background: rgba(56, 189, 248, 0.12); border: 1px solid var(--accent); color: var(--accent); font-size: 0.68rem; font-weight: 700; padding: 2px 7px; border-radius: 5px; }
+    .sso-desc { font-size: 0.77rem; color: var(--text-muted); }
+    .sso-btn {
+      display: inline-flex; align-items: center; gap: 10px; padding: 8px 15px;
+      background: linear-gradient(135deg, #1d4ed8, #1e40af); border: 1px solid #38bdf8;
+      border-radius: 8px; text-decoration: none; transition: 0.2s;
+    }
+    .sso-btn:hover { background: linear-gradient(135deg, #2563eb, #1d4ed8); transform: translateY(-1px); }
+    .sso-btn-text { color: #fff; font-size: 0.82rem; font-weight: 700; }
+    .sso-btn-divider { width: 1px; height: 14px; background: rgba(255,255,255,0.25); }
+    .sso-btn-url { font-family: monospace; font-size: 0.74rem; color: #bae6fd; }
+
+    .stats-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .badge-units {
+      background: rgba(56, 189, 248, 0.12); border: 1px solid var(--accent); color: var(--accent);
+      font-family: 'Orbitron', 'Vazirmatn', sans-serif; font-size: 0.8rem; font-weight: 800;
+      padding: 6px 13px; border-radius: 8px; height: 38px; display: inline-flex; align-items: center;
+    }
+
+    .toast {
+      position: fixed; bottom: 24px; left: 24px;
+      background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(12px);
+      border: 1px solid var(--accent); border-right: 4px solid var(--accent);
+      color: #fff; padding: 12px 18px; border-radius: 10px; font-size: 0.82rem; font-weight: 600;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.65); z-index: 9999;
+      opacity: 0; visibility: hidden; transform: translateY(16px); transition: 0.25s; max-width: 420px; pointer-events: none;
+    }
+    .toast.show { opacity: 1; visibility: visible; transform: translateY(0); }
+
+    /* انتخاب واحد */
+    .schedule-app-container { display: flex; flex-direction: column; gap: 16px; }
+    .schedule-header-bar, .gpa-header-bar {
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: 12px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;
+    }
+    .schedule-header-title h2, .gpa-header-info h2 {
+      font-size: 1.12rem; font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .schedule-header-title span, .gpa-header-info span { font-size: 0.74rem; color: var(--text-muted); display: block; margin-top: 2px; }
+
+    .plans-manager-bar {
+      display: flex; gap: 10px; align-items: center; background: var(--bg-surface);
+      border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 16px; justify-content: space-between; flex-wrap: wrap;
+    }
+    .plan-tabs-scroll { display: flex; gap: 8px; flex: 1; overflow-x: auto; min-width: 180px; }
+    .plan-tab {
+      padding: 6px 13px; font-size: 0.8rem; font-weight: 700; color: var(--text-muted);
+      background: #080c14; border: 1px solid var(--border-color); border-radius: 8px;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; transition: 0.2s;
+    }
+    .plan-tab:hover { border-color: var(--accent); color: #fff; }
+    .plan-tab.active { background: linear-gradient(135deg, #1e40af, #1d4ed8); color: #fff; border-color: #38bdf8; }
+    .plan-tab-close { font-size: 0.75rem; color: rgba(255,255,255,0.5); }
+    .plan-tab-close:hover { color: var(--danger); }
+
+    .form-panel {
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: 12px; padding: 18px 22px; display: flex; flex-direction: column; gap: 14px;
+    }
+    .form-main-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+    .input-field { display: flex; flex-direction: column; gap: 5px; position: relative; }
+    .input-field label { font-size: 0.76rem; color: var(--text-muted); font-weight: 600; }
+    
+    .form-panel input[type="text"], .form-panel input[type="date"], .form-panel input[type="number"], .form-panel select, .std-input {
+      background: #080c14; border: 1px solid var(--border-color); color: var(--text-main);
+      padding: 7px 11px; border-radius: 8px; font-size: 0.82rem; outline: none; transition: 0.2s; height: 38px;
+    }
+    .form-panel input:focus, .form-panel select:focus, .std-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
+
+    .unit-stepper {
+      display: flex; align-items: center; background: #080c14;
+      border: 1px solid var(--border-color); border-radius: 8px; height: 38px; padding: 3px; user-select: none;
+    }
+    .unit-stepper button {
+      background: rgba(255,255,255,0.05); border: none; color: var(--text-main);
+      width: 28px; height: 100%; border-radius: 5px; cursor: pointer; font-size: 1rem;
+    }
+    .unit-stepper button:hover { background: rgba(56, 189, 248, 0.2); color: var(--accent); }
+    .unit-stepper-val { min-width: 32px; text-align: center; font-weight: 700; font-size: 0.88rem; color: var(--accent); }
+
+    .sessions-builder-container {
+      display: flex; flex-direction: column; gap: 8px; background: #080c14;
+      padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%;
+    }
+    .session-builder-row {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      background: var(--bg-card); padding: 7px 10px; border-radius: 6px; border: 1px solid var(--border-color);
+    }
+
+    .custom-select-box { position: relative; user-select: none; }
+    .custom-select-trigger {
+      background: #080c14; border: 1px solid var(--border-color); color: var(--text-main);
+      padding: 6px 10px; border-radius: 6px; font-size: 0.78rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between; gap: 6px; height: 34px;
+    }
+    .custom-select-trigger:hover, .custom-select-box.open .custom-select-trigger { border-color: var(--accent); }
+    .custom-select-trigger .arrow { font-size: 0.55rem; color: var(--text-muted); transition: 0.2s; }
+    .custom-select-box.open .custom-select-trigger .arrow { transform: rotate(180deg); color: var(--accent); }
+    .custom-options-menu {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: #101728; border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.75); max-height: 190px; overflow-y: auto;
+      z-index: 200; opacity: 0; visibility: hidden; transform: translateY(-4px); transition: 0.18s; padding: 4px;
+    }
+    .custom-select-box.open .custom-options-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+    .custom-option {
+      padding: 6px 8px; font-size: 0.76rem; border-radius: 4px; cursor: pointer;
+      color: #cbd5e1; display: flex; align-items: center; gap: 6px;
+    }
+    .custom-option:hover { background: rgba(56, 189, 248, 0.15); color: #fff; }
+    .custom-option.selected { background: rgba(2, 132, 199, 0.35); color: var(--accent); font-weight: 700; }
+
+    .color-bullet { width: 12px; height: 12px; border-radius: 50%; display: inline-block; border: 1px solid rgba(255,255,255,0.4); flex-shrink: 0; }
+
+    .advanced-toggle {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-muted);
+      font-size: 0.76rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 7px;
+    }
+    .advanced-toggle:hover, .advanced-toggle.open { color: var(--accent); border-color: rgba(56, 189, 248, 0.4); }
+    .advanced-drawer { max-height: 0; overflow: hidden; transition: 0.3s ease; opacity: 0; background: var(--bg-card); border-radius: 8px; }
+    .advanced-drawer.open { max-height: 500px; opacity: 1; border: 1px solid var(--border-color); padding: 14px; overflow: visible; }
+    .advanced-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+
+    .btn-sch {
+      padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 0.79rem;
+      border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; height: 38px; white-space: nowrap;
+    }
+    .btn-sch-primary { background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; }
+    .btn-sch-primary:hover { opacity: 0.94; transform: translateY(-1px); }
+    .btn-sch-warning { background: linear-gradient(135deg, #d97706, #b45309); color: #fff; }
+    .btn-sch-secondary { background: #1e293b; color: #cbd5e1; border: 1px solid var(--border-color); }
+    .btn-sch-secondary:hover { background: #334155; color: #fff; border-color: rgba(56, 189, 248, 0.3); }
+
+    .schedule-main-grid { display: grid; grid-template-columns: 1fr 310px; gap: 16px; align-items: start; }
+    @media (max-width: 1180px) { .schedule-main-grid { grid-template-columns: 1fr; } }
+
+    .calendar-wrapper { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; overflow-x: auto; }
+    .timeline-container {
+      display: flex; flex-direction: column; width: calc(100px + 14 * var(--hour-w)); min-width: calc(100px + 14 * var(--hour-w));
+      border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: #080c14; margin: 0 auto;
+    }
+    .timeline-header-row { display: flex; background: #131d31; border-bottom: 1px solid var(--border-color); }
+    .timeline-header-corner { width: 100px; min-width: 100px; padding: 10px 6px; font-weight: 700; font-size: 0.76rem; color: #cbd5e1; text-align: center; border-left: 1px solid var(--border-color); }
+    .timeline-hours-track { display: flex; width: calc(14 * var(--hour-w)); min-width: calc(14 * var(--hour-w)); }
+    .hour-marker { width: var(--hour-w); min-width: var(--hour-w); padding: 10px 4px; font-size: 0.7rem; font-weight: 700; color: var(--accent); text-align: right; border-left: 1px dashed rgba(255,255,255,0.08); font-family: 'Orbitron', monospace; }
+
+    .timeline-day-row { display: flex; border-bottom: 1px solid var(--border-color); height: 74px; }
+    .timeline-day-row:last-child { border-bottom: none; }
+    .day-sidebar-label { width: 100px; min-width: 100px; background: #0d1524; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: #cbd5e1; border-left: 1px solid var(--border-color); }
+    .day-track {
+      width: calc(14 * var(--hour-w)); min-width: calc(14 * var(--hour-w)); position: relative;
+      background-image: linear-gradient(to left, rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(to left, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: var(--hour-w) 100%, calc(var(--hour-w) / 2) 100%;
+    }
+    .day-track.drag-over { background-color: rgba(56, 189, 248, 0.08); }
+
+    .event-card {
+      position: absolute; top: 4px; bottom: 4px; border-radius: 7px; padding: 4px 7px;
+      font-size: 0.72rem; display: flex; flex-direction: column; justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.25);
+      z-index: 2; overflow: hidden; cursor: grab; user-select: none;
+    }
+    .event-card:hover { border-color: rgba(255,255,255,0.65); z-index: 5; }
+    .event-title { font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .event-instructor { font-size: 0.64rem; color: rgba(255,255,255,0.88); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .event-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.62rem; color: #fff; font-weight: 600; direction: ltr; }
+
+    .schedule-sidebar-panel {
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 10px; max-height: 580px;
+    }
+    .schedule-sidebar-panel h3 { font-size: 0.88rem; font-weight: 700; color: #cbd5e1; display: flex; justify-content: space-between; align-items: center; }
+    .courses-list { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-left: 2px; }
+    .course-item {
+      background: #080c14; border: 1px solid var(--border-color); border-right: 3px solid var(--accent);
+      border-radius: 8px; padding: 9px 11px; display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    }
+    .course-item-info strong { display: block; font-size: 0.8rem; color: #fff; margin-bottom: 2px; }
+    .course-item-info span { font-size: 0.68rem; color: var(--text-muted); display: block; line-height: 1.4; }
+    .code-copy-pill {
+      display: inline-flex; align-items: center; gap: 4px; background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35); color: var(--accent); font-family: monospace;
+      font-size: 0.7rem; font-weight: 700; padding: 1px 6px; border-radius: 4px; cursor: pointer; margin-top: 3px;
+    }
+    .code-copy-pill:hover { background: var(--primary); color: #fff; }
+    .btn-icon { background: transparent; border: none; cursor: pointer; font-size: 0.86rem; padding: 4px 6px; border-radius: 5px; }
+    .btn-icon:hover { background: rgba(255,255,255,0.08); }
+    .btn-edit { color: var(--warning); }
+    .btn-delete { color: var(--danger); }
+
+    /* محاسبه‌گر معدل */
+    .gpa-container { display: flex; flex-direction: column; gap: 18px; }
+    .gpa-mode-switch { display: flex; background: #080c14; padding: 4px; border-radius: 8px; border: 1px solid var(--border-color); }
+    .gpa-mode-btn { padding: 6px 12px; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); background: transparent; border: none; border-radius: 6px; cursor: pointer; }
+    .gpa-mode-btn.active { background: var(--primary); color: #fff; }
+
+    .gpa-main-grid { display: grid; grid-template-columns: 1fr 360px; gap: 18px; align-items: start; }
+    @media (max-width: 1100px) { .gpa-main-grid { grid-template-columns: 1fr; } }
+
+    .gpa-config-panel, .gpa-term-card {
+      background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .gpa-config-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+    .gpa-input {
+      background: #080c14; border: 1px solid var(--border-color); color: var(--text-main);
+      padding: 7px 11px; border-radius: 8px; font-size: 0.84rem; outline: none; height: 38px; font-weight: 700;
+    }
+    .gpa-terms-wrapper { display: flex; flex-direction: column; gap: 14px; }
+    .gpa-term-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+    .gpa-term-title-input { background: transparent; border: 1px solid transparent; color: var(--text-main); font-size: 0.9rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; outline: none; }
+    .gpa-term-title-input:focus { background: #080c14; border-color: var(--border-color); }
+
+    .term-reorder-group { display: inline-flex; align-items: center; gap: 3px; background: #080c14; border: 1px solid var(--border-color); border-radius: 7px; padding: 2px 4px; }
+    .btn-term-move { background: transparent; border: none; color: var(--text-muted); width: 24px; height: 24px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .btn-term-move:hover { color: var(--accent); background: var(--bg-card); }
+    .btn-term-move svg { width: 14px; height: 14px; stroke: currentColor; }
+
+    .gpa-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .gpa-table th { color: var(--text-muted); font-weight: 700; padding: 7px 5px; border-bottom: 1px solid var(--border-color); text-align: right; }
+    .gpa-table td { padding: 7px 5px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+    .gpa-table tr.withdrawn-row { opacity: 0.48; background: rgba(244, 63, 94, 0.05); }
+    .gpa-table input[type="text"], .gpa-table select {
+      width: 100%; background: #080c14; border: 1px solid var(--border-color); color: var(--text-main); padding: 5px 8px; border-radius: 6px; font-size: 0.78rem; outline: none;
+    }
+    .table-unit-stepper { display: inline-flex; align-items: center; background: #080c14; border: 1px solid var(--border-color); border-radius: 6px; height: 30px; padding: 2px; }
+    .table-unit-stepper button { background: rgba(255,255,255,0.05); border: none; color: var(--text-main); width: 22px; height: 100%; border-radius: 4px; cursor: pointer; }
+    .table-unit-stepper-val { min-width: 22px; text-align: center; font-weight: 700; font-size: 0.82rem; color: var(--accent); }
+    .gpa-table input[type="number"] { background: #080c14; border: 1px solid var(--border-color); color: var(--text-main); padding: 5px 6px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; text-align: center; outline: none; }
+
+    .sim-tag-btn {
+      padding: 3px 7px; font-size: 0.68rem; font-weight: 800; border-radius: 5px; cursor: pointer;
+      border: 1px solid var(--border-color); background: #080c14; color: var(--text-muted); transition: 0.15s;
+    }
+    .sim-tag-btn.active-w { background: rgba(244, 63, 94, 0.2); border-color: var(--danger); color: var(--danger); }
+    .sim-tag-btn.active-retake { background: rgba(16, 185, 129, 0.2); border-color: var(--success); color: var(--success); }
+
+    .gpa-dashboard { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 14px; position: sticky; top: 10px; }
+    .gpa-metrics-card { background: linear-gradient(135deg, #131f37 0%, #0b1329 100%); border: 1px solid var(--border-accent); border-radius: 10px; padding: 18px; position: relative; overflow: hidden; }
+    .gpa-value-large { font-size: 2.8rem; font-weight: 900; color: #fff; line-height: 1; margin: 12px 0 8px; font-family: 'Orbitron', sans-serif; }
+    .gpa-progress-track { width: 100%; height: 7px; background: #080c14; border-radius: 4px; overflow: hidden; margin-top: 6px; }
+    .gpa-progress-bar { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.4s ease; }
+    .gpa-summary-card { background: #080c14; border: 1px solid var(--border-color); border-radius: 10px; padding: 13px; display: flex; flex-direction: column; gap: 8px; }
+
+    .confetti { position: absolute; width: 6px; height: 6px; border-radius: 50%; animation: confettiDrop 1.5s ease-out infinite; }
+    @keyframes confettiDrop { 0% { transform: translateY(-10px) rotate(0deg); opacity: 1; } 100% { transform: translateY(220px) rotate(360deg); opacity: 0; } }
+
+    /* چارت درسی، ددلاین، اساتید، مهندسی */
+    .cat-progress-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+    .cat-box { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .deadline-card {
+      background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 10px;
+      padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .countdown-badge { font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; }
+    .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+    .calc-btn {
+      background: #080c14; border: 1px solid var(--border-color); color: var(--text-main);
+      height: 42px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.15s;
+    }
+    .calc-btn:hover { border-color: var(--accent); background: var(--bg-card); color: var(--accent); }
+    .calc-btn.op { background: rgba(29, 78, 216, 0.25); border-color: var(--border-accent); color: var(--accent); }
+
+    /* اتاق تمرکز */
+    .lounge-hero {
+      background: linear-gradient(135deg, #091322 0%, #0d1e3d 100%); border: 1px solid var(--border-accent);
+      border-radius: 14px; padding: 22px 26px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+    }
+    .peace-title-box h3 { font-size: 1.5rem; font-weight: 900; background: linear-gradient(135deg, #fff 0%, #93c5fd 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .peace-subtitle { font-size: 0.78rem; color: var(--accent); font-weight: 600; margin-top: 4px; }
+    .quote-box { background: rgba(8,12,20,0.75); border: 1px solid var(--border-color); border-right: 3px solid var(--accent); border-radius: 10px; padding: 13px 16px; max-width: 620px; flex: 1; min-width: 270px; display: flex; flex-direction: column; gap: 6px; }
+    .quote-text { font-size: 0.84rem; color: #f1f5f9; line-height: 1.7; white-space: pre-line; }
+    .quote-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+    .quote-author { font-size: 0.74rem; color: var(--accent); font-weight: 700; }
+    .btn-quote-refresh { background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.2); border-radius: 6px; padding: 3px 9px; color: var(--text-main); cursor: pointer; font-size: 0.74rem; font-weight: 600; }
+    .btn-quote-refresh:hover { background: var(--primary); color: #fff; }
+
+    .lounge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+    @media (max-width: 950px) { .lounge-grid { grid-template-columns: 1fr; } }
+
+    .breathe-card, .pomodoro-card {
+      background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px;
+      padding: 22px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; min-height: 330px;
+    }
+    .breathe-circle-container { position: relative; width: 165px; height: 165px; display: flex; align-items: center; justify-content: center; margin: 12px 0; }
+    .breathe-outer-glow { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(56,189,248,0.28) 0%, transparent 70%); transform: scale(0.8); transition: transform 4s ease-in-out; }
+    .breathe-circle { width: 112px; height: 112px; border-radius: 50%; background: linear-gradient(135deg, #1e40af, #0284c7); border: 2px solid var(--accent); box-shadow: 0 0 24px rgba(56,189,248,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; transform: scale(0.85); transition: transform 4s ease-in-out; z-index: 2; }
+    .breathe-status-text { font-size: 0.9rem; font-weight: 800; color: #fff; }
+    .breathe-timer-sub { font-family: 'Orbitron', monospace; font-size: 0.76rem; color: #bae6fd; margin-top: 2px; }
+    .ambient-bar { display: flex; align-items: center; gap: 8px; background: #080c14; border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; margin-top: 6px; flex-wrap: wrap; justify-content: center; }
+
+    .pomodoro-timer-digits { font-family: 'Orbitron', monospace; font-size: 3.1rem; font-weight: 900; color: #fff; letter-spacing: 3px; margin: 6px 0; text-shadow: 0 0 20px rgba(56,189,248,0.35); }
+    .pomo-modes { display: flex; background: #080c14; padding: 4px; border-radius: 8px; border: 1px solid var(--border-color); gap: 4px; flex-wrap: wrap; justify-content: center; }
+    .pomo-mode-btn { padding: 5px 11px; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); background: transparent; border: none; border-radius: 6px; cursor: pointer; }
+    .pomo-mode-btn.active { background: var(--primary); color: #fff; }
+    .pomo-custom-input-box { display: flex; align-items: center; gap: 8px; }
+    .pomo-custom-input-box input { width: 62px; height: 32px; background: #080c14; border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-main); font-weight: 800; text-align: center; outline: none; }
+
+    .todo-item { background: #080c14; border: 1px solid var(--border-color); border-radius: 8px; padding: 9px 13px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .todo-item.done { opacity: 0.6; }
+    .todo-item.done .todo-text { text-decoration: line-through; color: var(--text-muted); }
+    .custom-check-label { display: flex; align-items: center; gap: 10px; cursor: pointer; flex: 1; }
+    .custom-check-box { width: 18px; height: 18px; border: 1.5px solid var(--border-accent); border-radius: 5px; display: flex; align-items: center; justify-content: center; background: var(--bg-surface); flex-shrink: 0; }
+    .todo-item.done .custom-check-box { background: var(--accent); border-color: var(--accent); }
+    .custom-check-box svg { width: 12px; height: 12px; stroke: #070d19; stroke-width: 3; display: none; }
+    .todo-item.done .custom-check-box svg { display: block; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- سایدبار -->
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <div class="iut-badge">IUT</div>
+      <div>
+        <div class="sidebar-title">ابزارآلات دانشگاه</div>
+        <div class="sidebar-subtitle">دانشگاه صنعتی اصفهان</div>
+      </div>
+    </div>
+    <ul class="nav-list">
+      <li class="nav-section-title">هسته اصلی</li>
+      <li class="nav-item active" onclick="switchTool('home', this)">
+        <span>🏠 میز کار دانشجو</span>
+      </li>
+      <li class="nav-item" onclick="switchTool('gpa-calc', this)">
+        <span>📊 محاسبه معدل و شبیه‌ساز W</span>
+      </li>
+      <li class="nav-item" onclick="switchTool('curriculum', this)">
+        <span>📅 انتخاب واحد و کد بهستان</span>
+      </li>
+      <li class="nav-section-title">مدیریت ترم و فارغ‌التحصیلی</li>
+      <li class="nav-item" onclick="switchTool('degree-chart', this)">
+        <span>🎓 چارت درسی و پیشرفت مدرک</span>
+      </li>
+      <li class="nav-item" onclick="switchTool('deadlines', this)">
+        <span>⏳ ددلاین تمرین و گزارش‌کار</span>
+        <span class="nav-badge" id="navDeadlineBadge">0</span>
+      </li>
+      <li class="nav-item" onclick="switchTool('professors', this)">
+        <span>👨‍🏫 اساتید و قالب ایمیل رسمی</span>
+      </li>
+      <li class="nav-item" onclick="switchTool('eng-tools', this)">
+        <span>🧮 مهندسی و فرمول‌نامه</span>
+      </li>
+      <li class="nav-section-title">تندرستی و تمرکز</li>
+      <li class="nav-item" onclick="switchTool('quick-notes', this)">
+        <span>🧘‍♂️ اتاق تمرکز و آرامش ذهن</span>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">پشتیبان‌گیری یکپارچه</div>
+      <div class="backup-btn-row">
+        <button class="btn-mini-backup" onclick="exportAllUserData()">⬇️ ذخیره بکاپ</button>
+        <button class="btn-mini-backup" onclick="document.getElementById('importBackupInput').click()">⬆️ بازیابی</button>
+        <input type="file" id="importBackupInput" accept=".json" style="display:none" onchange="importAllUserData(event)">
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
+  <!-- محتوای اصلی -->
+  <main id="main-content">
+    <header>
+      <div class="header-right">
+        <button class="menu-btn" id="menuToggleBtn" onclick="toggleSidebar()" aria-label="منو">
+          <span></span><span></span><span></span>
+        </button>
+        <span class="header-title-text" id="headerTitle">میز کار دانشجو</span>
+      </div>
+      <div class="header-left">
+        <div class="header-date-badge" id="headerPersianDate">📅 ...</div>
+        <div class="header-clock-box">
+          <span style="font-size: 0.78rem; color: var(--accent);">🕒</span>
+          <span class="header-clock-digits" id="headerLiveClock">00:00:00</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <!-- تب ۱: میز کار دانشجو -->
+      <section id="home" class="tool-section active">
+        <!-- هشدار هوشمند رزرو غذا (اتوماسیون ستاره) -->
+        <div class="dining-alert-banner" id="diningAlertBanner">
+          <div class="dining-alert-info">
+            <div class="dining-pulse-dot"></div>
+            <div>
+              <div id="diningAlertTitle" style="color: #fff; font-weight: 800;">یادآور اتوماسیون تغذیه (ستاره)</div>
+              <div id="diningAlertDesc" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">رزرو غذای هفته بعد در سامانه ستاره فراموش نشه! (مهلت رزرو: تا چهارشنبه ظهر)</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <a href="https://dining.iut.ac.ir" target="_blank" rel="noopener" class="card-btn" style="text-decoration: none; background: var(--primary); color: #fff;">🍽️ ورود به ستاره</a>
+          </div>
+        </div>
+
+        <div class="hero-banner">
+          <h1 class="hero-title">به دستیار جامع دانشجویی دانشگاه صنعتی اصفهان خوش آمدید</h1>
+          <p class="hero-desc">
+            پایگاه یکپارچه محاسبه معدل، شبیه‌ساز حذف اضطراری، انتخاب واحد با کپی سریع کد بهستان، ردیاب ددلاین‌ها، چارت فارغ‌التحصیلی و جعبه ابزار مهندسی.
+          </p>
+        </div>
+
+        <div class="home-stats-strip">
+          <div class="home-stat-pill" onclick="document.querySelectorAll('.nav-item')[1].click()">
+            <div>
+              <div class="home-stat-label">معدل کل / ترم فعلی</div>
+              <div class="home-stat-val" id="homeStatGpa" dir="ltr">-- / 20</div>
+            </div>
+            <span style="font-size: 1.35rem;">📊</span>
+          </div>
+          <div class="home-stat-pill" onclick="document.querySelectorAll('.nav-item')[2].click()">
+            <div>
+              <div class="home-stat-label">واحدهای پلن انتخاب واحد</div>
+              <div class="home-stat-val" id="homeStatUnits">0 واحد</div>
+            </div>
+            <span style="font-size: 1.35rem;">📅</span>
+          </div>
+          <div class="home-stat-pill" onclick="document.querySelectorAll('.nav-item')[3].click()">
+            <div>
+              <div class="home-stat-label">پیشرفت چارت فارغ‌التحصیلی</div>
+              <div class="home-stat-val" id="homeStatDegree">0%</div>
+            </div>
+            <span style="font-size: 1.35rem;">🎓</span>
+          </div>
+          <div class="home-stat-pill" onclick="document.querySelectorAll('.nav-item')[4].click()">
+            <div>
+              <div class="home-stat-label">ددلاین‌ها و تحویل‌های پیش‌رو</div>
+              <div class="home-stat-val" id="homeStatDeadlines">0 مورد</div>
+            </div>
+            <span style="font-size: 1.35rem;">⏳</span>
+          </div>
+        </div>
+
+        <div class="section-title">ماژول‌ها و ابزارهای تخصصی</div>
+        <div class="grid-layout">
+          <div class="card">
+            <h3 class="card-title">📊 محاسبه‌گر معدل + شبیه‌ساز W</h3>
+            <p class="card-desc">محاسبه معدل ترم و کل، شبیه‌سازی حذف اضطراری (W) و جبران نمره، نمودار روند معدل و خروجی PDF.</p>
+            <button class="card-btn" onclick="document.querySelectorAll('.nav-item')[1].click()">ورود به ماژول ←</button>
+          </div>
+          <div class="card">
+            <h3 class="card-title">📅 انتخاب واحد + تقلب‌نامه بهستان</h3>
+            <p class="card-desc">شبیه‌ساز برنامه هفتگی، کپی تک‌کلیکی کد درس برای روز انتخاب واحد، خروجی عکس و فایل تقویم گوشی (.ics).</p>
+            <button class="card-btn" onclick="document.querySelectorAll('.nav-item')[2].click()">ورود به ماژول ←</button>
+          </div>
+          <div class="card">
+            <h3 class="card-title">🎓 چارت درسی و پیشرفت مدرک</h3>
+            <p class="card-desc">رصد درصد پیشرفت فارغ‌التحصیلی به تفکیک دروس عمومی، پایه، اصلی، تخصصی و آزمایشگاه.</p>
+            <button class="card-btn" onclick="document.querySelectorAll('.nav-item')[3].click()">ورود به ماژول ←</button>
+          </div>
+          <div class="card">
+            <h3 class="card-title">⏳ ردیاب تمرین، کوئیز و گزارش‌کار</h3>
+            <p class="card-desc">ثبت تاریخ تحویل پروژه‌ها، گزارش‌کارها و امتحانات با شمارشگر معکوس روزهای باقی‌مانده.</p>
+            <button class="card-btn" onclick="document.querySelectorAll('.nav-item')[4].click()">ورود به ماژول ←</button>
+          </div>
+          <div class="card">
+            <h3 class="card-title">👨‍🏫 اساتید و ایمیل‌ساز رسمی</h3>
+            <p class="card-desc">ذخیره ساعت حضور و ایمیل اساتید + تولید خودکار متن ایمیل رسمی (بازبینی نمره، توصیه‌نامه، تمدید ددلاین).</p>
+            <button class="card-btn" onclick="document.querySelectorAll('.nav-item')[5].click()">ورود به ماژول ←</button>
+          </div>
+          <div class="card">
+            <h3 class="card-title">🧮 مهندسی، تبدیل واحد و فرمول‌نامه</h3>
+            <p class="card-desc">ماشین‌حساب علمی، تبدیل واحدهای آزمایشگاهی/بلورشناسی و تخته سنجاق فرمول‌های مهم ترم.</p>
+            <button class="card-btn" onclick="document.querySelectorAll('.nav-item')[6].click()">ورود به ماژول ←</button>
+          </div>
+        </div>
+
+        <div class="section-title">دسترسی سریع به سامانه‌های دانشگاه</div>
+        <div class="quick-links-grid">
+          <a href="https://behestan.iut.ac.ir" target="_blank" rel="noopener" class="link-box">سامانه بهستان <span>behestan.iut.ac.ir</span></a>
+          <a href="https://yekta.iut.ac.ir" target="_blank" rel="noopener" class="link-box">سامانه درس‌افزار (یکتا) <span>yekta.iut.ac.ir</span></a>
+          <a href="https://dining.iut.ac.ir" target="_blank" rel="noopener" class="link-box">اتوماسیون ستاره (تغذیه) <span>dining.iut.ac.ir</span></a>
+          <a href="https://webmail.iut.ac.ir" target="_blank" rel="noopener" class="link-box">سامانه ایمیل دانشگاه <span>webmail.iut.ac.ir</span></a>
+        </div>
+
+        <div class="sso-hero-card">
+          <div class="sso-info">
+            <div class="sso-header-row">
+              <h3 class="sso-title">سامانه احراز هویت متمرکز دانشگاه</h3>
+              <span class="sso-badge">SSO</span>
+            </div>
+            <p class="sso-desc">درگاه رسمی اتصال یکپارچه به کلیه پرتال‌ها، سامانه‌های آموزشی و حساب کاربری یکتا.</p>
+          </div>
+          <a href="https://login.iut.ac.ir" target="_blank" rel="noopener" class="sso-btn">
+            <span class="sso-btn-text">ورود به درگاه</span>
+            <span class="sso-btn-divider"></span>
+            <span class="sso-btn-url">login.iut.ac.ir</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- تب ۲: سامانه محاسبه معدل + شبیه‌ساز حذف اضطراری و نمودار روند -->
+      <section id="gpa-calc" class="tool-section">
+        <div class="gpa-container" id="gpaExportArea">
+          <div class="gpa-header-bar">
+            <div class="gpa-header-info">
+              <h2>سامانه محاسبه معدل، شبیه‌ساز حذف اضطراری (W) و روند تحصیلی</h2>
+              <span>با زدن دکمه W روی هر درس، تاثیر حذف اضطراری آن را زنده ببینید؛ یا با ↻ جبران نمره درس افتاده را شبیه‌سازی کنید</span>
+            </div>
+            <div class="stats-group">
+              <button class="btn-sch btn-sch-secondary" onclick="exportGpaPDF()">📄 دانلود کارنامه (PDF)</button>
+              <div class="gpa-mode-switch">
+                <button id="btnGpaTerm" class="gpa-mode-btn active" onclick="switchGpaMode('term')">فقط همین ترم</button>
+                <button id="btnGpaCgpa" class="gpa-mode-btn" onclick="switchGpaMode('cgpa')">معدل کل (چند ترم)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="gpa-main-grid">
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <div class="gpa-config-panel">
+                <div class="gpa-config-row">
+                  <div class="input-field" style="flex: 1; min-width: 160px;">
+                    <label>هدف معدل شما (از 20)</label>
+                    <input type="number" id="targetGpaInput" step="0.1" min="0" max="20" value="17.0" class="gpa-input" dir="ltr" oninput="saveGpaState()">
+                  </div>
+                  <div class="input-field" id="cgpaCountBox" style="display: none; flex: 1; min-width: 180px;">
+                    <label>تعداد ترم‌های محاسبه</label>
+                    <div style="display: flex; gap: 6px;">
+                      <input type="number" id="gpaTermsCount" min="1" max="12" value="2" class="gpa-input" style="flex: 1;" dir="ltr">
+                      <button class="btn-sch btn-sch-primary" onclick="generateGpaTermsFromCount()">اعمال</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="gpa-terms-wrapper" id="gpaTermsContainer"></div>
+
+              <button class="btn-sch btn-sch-primary" style="width: 100%; height: 42px;" onclick="calculateGpaReport()">
+                🚀 محاسبه دقیق معدل، شبیه‌سازی W و رسم نمودار روند
+              </button>
+            </div>
+
+            <div>
+              <div class="gpa-dashboard" id="gpaDashboard">
+                <div id="gpaPlaceholder" style="text-align: center; padding: 22px 10px; color: var(--text-muted);">
+                  <div style="font-size: 2rem; margin-bottom: 8px;">📊</div>
+                  <p style="font-size: 0.82rem; line-height: 1.6;">نمرات را وارد کرده و دکمه محاسبه را بزنید تا کارنامه، شبیه‌ساز هدف و نمودار روند معدل نمایش داده شود.</p>
+                </div>
+
+                <div id="gpaResultBox" style="display: none; flex-direction: column; gap: 12px;">
+                  <div class="gpa-metrics-card">
+                    <div id="gpaConfettiContainer" style="position: absolute; inset: 0; pointer-events: none;"></div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                      <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">معدل محاسبه‌شده</span>
+                      <span id="gpaStatusBadge" class="sso-badge">...</span>
+                    </div>
+                    <div class="gpa-value-large" id="gpaComputedValue" dir="ltr">0.00</div>
+                    <div>
+                      <div style="display: flex; justify-content: space-between; font-size: 0.74rem; font-weight: 700; color: var(--text-muted);">
+                        <span>پیشرفت به سوی هدف (<span id="txtTargetGpaVal">17.00</span>)</span>
+                        <span id="gpaTargetPercent" dir="ltr">0%</span>
+                      </div>
+                      <div class="gpa-progress-track">
+                        <div class="gpa-progress-bar" id="gpaProgressBar" style="width: 0%;"></div>
+                      </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); text-align: center;">
+                      <div style="background: #080c14; padding: 7px; border-radius: 6px; border: 1px solid var(--border-color);">
+                        <span style="display: block; font-size: 0.64rem; color: var(--text-muted);">مقیاس 4.0 (US GPA)</span>
+                        <span id="gpaScale4Value" style="font-size: 0.88rem; font-weight: 800; color: var(--accent); margin-top: 2px; display: block;" dir="ltr">0.00 / 4.0</span>
+                      </div>
+                      <div style="background: #080c14; padding: 7px; border-radius: 6px; border: 1px solid var(--border-color);">
+                        <span style="display: block; font-size: 0.64rem; color: var(--text-muted);">واحدهای موثر در معدل</span>
+                        <span id="gpaTotalUnitsValue" style="font-size: 0.88rem; font-weight: 800; color: var(--text-main); margin-top: 2px; display: block;" dir="ltr">0</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- نمودار خطی روند معدل (GPA Trend Chart) -->
+                  <div class="gpa-summary-card" id="gpaTrendChartCard" style="display: none;">
+                    <div style="font-size: 0.76rem; font-weight: 700; color: #cbd5e1; display: flex; justify-content: space-between;">
+                      <span>📈 نمودار روند معدل ترم‌ها</span>
+                      <span id="gpaTrendSlopeText" style="font-size: 0.7rem; color: var(--accent);"></span>
+                    </div>
+                    <div id="gpaTrendSvgContainer" style="width: 100%; height: 125px; margin-top: 4px;"></div>
+                  </div>
+
+                  <div class="gpa-summary-card">
+                    <div style="font-size: 0.76rem; font-weight: 700; color: #cbd5e1;">📋 تحلیل آماری، شبیه‌ساز W و هدف</div>
+                    <div id="gpaSummaryContent" style="font-size: 0.78rem; color: var(--text-muted);"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- تب ۳: انتخاب واحد + کد بهستان + خروجی .ics -->
+      <section id="curriculum" class="tool-section">
+        <div class="schedule-app-container">
+          <div class="schedule-header-bar">
+            <div class="schedule-header-title">
+              <h2>دستیار انتخاب واحد + تقلب‌نامه کد بهستان</h2>
+              <span>شبیه‌سازی برنامه هفتگی، کپی سریع کد درس برای بهستان و خروجی تقویم هوشمند گوشی (.ics)</span>
+            </div>
+            <div class="stats-group">
+              <button class="btn-sch btn-sch-secondary" onclick="copyAllBehestanCodes()" title="کپی یکجای تمام کدهای دروس این پلن">📋 کپی همه کدها</button>
+              <button class="btn-sch btn-sch-secondary" onclick="exportScheduleICS()" title="دانلود فایل تقویم برای Google Calendar و گوشی">📅 تقویم گوشی (.ics)</button>
+              <button class="btn-sch btn-sch-secondary" onclick="exportSchedule()">📸 تصویر پلن (PNG)</button>
+              <button class="btn-sch btn-sch-primary" onclick="exportAllPlans()">📸 تصویر همه پلن‌ها</button>
+              <div class="badge-units" id="unitsBadge">0 Units</div>
+            </div>
+          </div>
+
+          <div class="plans-manager-bar">
+            <div class="plan-tabs-scroll" id="plansManagerBar"></div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button class="btn-sch btn-sch-secondary" onclick="renameCurrentPlan()" style="height: 32px; font-size: 0.74rem; padding: 0 10px;">تغییر نام</button>
+              <button class="btn-sch btn-sch-secondary" onclick="duplicatePlan()" style="height: 32px; font-size: 0.74rem; padding: 0 10px;">کپی پلن</button>
+              <button class="btn-sch btn-sch-primary" onclick="createNewPlan()" style="height: 32px; font-size: 0.74rem; padding: 0 10px;">+ پلن جدید</button>
+            </div>
+          </div>
+
+          <div class="form-panel" id="formPanel">
+            <div class="form-main-row">
+              <div class="input-field" style="flex: 2; min-width: 155px;">
+                <label>نام درس</label>
+                <input type="text" id="cName" placeholder="مثال: بلورشناسی / معادلات">
+              </div>
+
+              <div class="input-field" style="flex: 1.2; min-width: 135px;">
+                <label>کد درس-گروه (بهستان)</label>
+                <input type="text" id="cCode" placeholder="مثال: 1411023-01" dir="ltr" style="font-family: monospace; font-weight: 700; color: var(--accent);">
+              </div>
+
+              <div class="input-field">
+                <label>تعداد واحد</label>
+                <div class="unit-stepper">
+                  <button type="button" onclick="changeUnits(-1)">−</button>
+                  <div class="unit-stepper-val" id="cUnitsVal">3</div>
+                  <button type="button" onclick="changeUnits(1)">+</button>
+                  <input type="hidden" id="cUnits" value="3">
+                </div>
+              </div>
+
+              <div class="input-field" style="flex: 3.5; min-width: 300px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                  <label>زمان‌بندی جلسات این درس</label>
+                  <button type="button" class="card-btn" style="padding: 2px 8px; font-size: 0.7rem;" onclick="addSessionRow()">+ افزودن جلسه مجزا</button>
+                </div>
+                <div class="sessions-builder-container" id="sessionsBuilderList"></div>
+              </div>
+
+              <button class="btn-sch btn-sch-primary" id="btnSubmitCourse" onclick="handleFormSubmit()">+ ثبت در جدول</button>
+              <button class="btn-sch btn-sch-secondary" id="btnCancelEdit" style="display: none;" onclick="cancelEditMode()">انصراف</button>
+            </div>
+
+            <div class="advanced-toggle-wrapper">
+              <button type="button" class="advanced-toggle" id="toggleDrawerBtn" onclick="toggleDrawer()">
+                <span class="arrow-icon">▼</span>
+                <span>تنظیمات بیشتر (استاد، مکان کلاس، تاریخ امتحان و رنگ)</span>
+              </button>
+            </div>
+
+            <div class="advanced-drawer" id="advancedDrawer">
+              <div class="advanced-grid">
+                <div class="input-field">
+                  <label>نام استاد / دانشکده و شماره کلاس</label>
+                  <input type="text" id="cInstructor" placeholder="مثال: دکتر موحدی - تالار ۱">
+                </div>
+                <div class="input-field">
+                  <label>تاریخ و ساعت امتحان پایان‌ترم (اختیاری)</label>
+                  <input type="text" id="cExamDate" placeholder="مثال: ۱۴۰۵/۰۳/۲۰ - ۰۹:۰۰">
+                </div>
+                <div class="input-field">
+                  <label>پالت رنگی دلخواه</label>
+                  <div class="custom-select-box" id="colorBox">
+                    <div class="custom-select-trigger" onclick="toggleDropdown('colorBox')">
+                      <span id="colorValText" style="display: flex; align-items: center; gap: 8px;">
+                        <span class="color-bullet" style="background: linear-gradient(135deg, #0284c7, #818cf8);"></span>
+                        <span>انتخاب خودکار رنگ</span>
+                      </span>
+                      <span class="arrow">▼</span>
+                    </div>
+                    <div class="custom-options-menu">
+                      <div class="custom-option selected" onclick="selectColor('auto', 'انتخاب خودکار رنگ', 'linear-gradient(135deg, #0284c7, #818cf8)', this)">
+                        <span class="color-bullet" style="background: linear-gradient(135deg, #0284c7, #818cf8);"></span><span>انتخاب خودکار رنگ</span>
+                      </div>
+                      <div class="custom-option" onclick="selectColor('linear-gradient(135deg, #0284c7, #0369a1)', 'آبی اقیانوسی', 'linear-gradient(135deg, #0284c7, #0369a1)', this)">
+                        <span class="color-bullet" style="background: linear-gradient(135deg, #0284c7, #0369a1);"></span><span>آبی اقیانوسی</span>
+                      </div>
+                      <div class="custom-option" onclick="selectColor('linear-gradient(135deg, #7c3aed, #6d28d9)', 'بنفش مات', 'linear-gradient(135deg, #7c3aed, #6d28d9)', this)">
+                        <span class="color-bullet" style="background: linear-gradient(135deg, #7c3aed, #6d28d9);"></span><span>بنفش مات</span>
+                      </div>
+                      <div class="custom-option" onclick="selectColor('linear-gradient(135deg, #059669, #047857)', 'سبز زمردی', 'linear-gradient(135deg, #059669, #047857)', this)">
+                        <span class="color-bullet" style="background: linear-gradient(135deg, #059669, #047857);"></span><span>سبز زمردی</span>
+                      </div>
+                      <div class="custom-option" onclick="selectColor('linear-gradient(135deg, #d97706, #b45309)', 'کهربایی / نارنجی', 'linear-gradient(135deg, #d97706, #b45309)', this)">
+                        <span class="color-bullet" style="background: linear-gradient(135deg, #d97706, #b45309);"></span><span>کهربایی / نارنجی</span>
+                      </div>
+                      <div class="custom-option" onclick="selectColor('linear-gradient(135deg, #db2777, #be185d)', 'سرخابی', 'linear-gradient(135deg, #db2777, #be185d)', this)">
+                        <span class="color-bullet" style="background: linear-gradient(135deg, #db2777, #be185d);"></span><span>سرخابی</span>
+                      </div>
+                    </div>
+                    <input type="hidden" id="cColorTheme" value="auto">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="schedule-main-grid">
+            <div class="calendar-wrapper" id="captureArea">
+              <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; padding: 0 4px;">
+                <div>
+                  <h3 id="capturePlanName" style="font-size: 1.1rem; font-weight: 800; color: #fff;">برنامه اصلی</h3>
+                  <span style="font-size: 0.72rem; color: var(--accent);">خروجی شبیه‌ساز انتخاب واحد - دانشگاه صنعتی اصفهان</span>
+                </div>
+                <div id="captureUnitsTotal" style="font-size: 0.82rem; font-weight: 700; background: var(--bg-card); padding: 4px 12px; border-radius: 6px; border: 1px solid var(--border-color); color: var(--accent);">0 واحد</div>
+              </div>
+
+              <div class="timeline-container">
+                <div class="timeline-header-row">
+                  <div class="timeline-header-corner">روز / ساعت</div>
+                  <div class="timeline-hours-track">
+                    <div class="hour-marker">07:30</div><div class="hour-marker">08:30</div><div class="hour-marker">09:30</div>
+                    <div class="hour-marker">10:30</div><div class="hour-marker">11:30</div><div class="hour-marker">12:30</div>
+                    <div class="hour-marker">13:30</div><div class="hour-marker">14:30</div><div class="hour-marker">15:30</div>
+                    <div class="hour-marker">16:30</div><div class="hour-marker">17:30</div><div class="hour-marker">18:30</div>
+                    <div class="hour-marker">19:30</div><div class="hour-marker">20:30</div>
+                  </div>
+                </div>
+                <div class="timeline-day-row"><div class="day-sidebar-label">شنبه</div><div class="day-track" id="row-0"></div></div>
+                <div class="timeline-day-row"><div class="day-sidebar-label">یکشنبه</div><div class="day-track" id="row-1"></div></div>
+                <div class="timeline-day-row"><div class="day-sidebar-label">دوشنبه</div><div class="day-track" id="row-2"></div></div>
+                <div class="timeline-day-row"><div class="day-sidebar-label">سه‌شنبه</div><div class="day-track" id="row-3"></div></div>
+                <div class="timeline-day-row"><div class="day-sidebar-label">چهارشنبه</div><div class="day-track" id="row-4"></div></div>
+                <div class="timeline-day-row"><div class="day-sidebar-label">پنج‌شنبه</div><div class="day-track" id="row-5"></div></div>
+              </div>
+            </div>
+
+            <div class="schedule-sidebar-panel">
+              <h3>
+                <span>تقلب‌نامه و دروس پلن</span>
+                <span id="courseCountBadge" style="font-size: 0.76rem; color: var(--accent);">0 درس</span>
+              </h3>
+              <div class="courses-list" id="coursesList"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- تب ۴: چارت درسی تعاملی و پیش‌نیازها (روند فارغ‌التحصیلی) -->
+      <section id="degree-chart" class="tool-section">
+        <div class="schedule-app-container">
+          <div class="schedule-header-bar">
+            <div class="schedule-header-title">
+              <h2>چارت درسی تعاملی و رصد پیشرفت فارغ‌التحصیلی</h2>
+              <span>محاسبه هوشمند واحدهای گذرانده‌شده از جدول معدل + مدیریت پیش‌نیازها به تفکیک نوع درس</span>
+            </div>
+            <div class="stats-group">
+              <span style="font-size: 0.78rem; color: var(--text-muted);">سقف کل واحدهای مدرک:</span>
+              <input type="number" id="degTotalTarget" value="140" min="20" max="250" class="std-input" style="width: 75px; text-align: center; font-weight: 800;" dir="ltr" onchange="saveDegreeConfig()">
+            </div>
+          </div>
+
+          <!-- نوار پیشرفت کلی مدرک -->
+          <div class="card" style="background: linear-gradient(135deg, #131f37 0%, #0b1329 100%); border-color: var(--border-accent);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <span style="font-size: 0.92rem; font-weight: 800; color: #fff;">مسیر طی‌شده تا فارغ‌التحصیلی</span>
+                <span id="degSummarySub" style="font-size: 0.76rem; color: var(--accent); display: block; margin-top: 2px;">...</span>
+              </div>
+              <span id="degOverallPct" style="font-family: 'Orbitron', monospace; font-size: 1.6rem; font-weight: 900; color: var(--accent);" dir="ltr">0%</span>
+            </div>
+            <div class="gpa-progress-track" style="height: 10px;">
+              <div class="gpa-progress-bar" id="degOverallBar" style="width: 0%; background: linear-gradient(90deg, #0284c7, #10b981);"></div>
+            </div>
+          </div>
+
+          <!-- تفکیک ۵ دسته دروس -->
+          <div class="cat-progress-grid" id="degreeCategoriesGrid"></div>
+
+          <!-- افزودن درس به چارت و ثبت پیش‌نیاز -->
+          <div class="form-panel">
+            <div style="font-size: 0.85rem; font-weight: 700; color: #e2e8f0;">➕ افزودن درس به نقشه چارت و پیش‌نیازها (علاوه بر دروس جدول معدل)</div>
+            <div class="form-main-row">
+              <div class="input-field" style="flex: 2; min-width: 160px;">
+                <label>نام درس</label>
+                <input type="text" id="chCourseName" placeholder="مثال: کریستالوگرافی / ریاضی مهندسی">
+              </div>
+              <div class="input-field" style="width: 90px;">
+                <label>واحد</label>
+                <input type="number" id="chCourseUnits" value="3" min="1" max="6" dir="ltr" style="text-align: center; font-weight: 700;">
+              </div>
+              <div class="input-field" style="flex: 1.2; min-width: 130px;">
+                <label>نوع درس</label>
+                <select id="chCourseCat">
+                  <option value="عمومی">عمومی</option>
+                  <option value="پایه">پایه</option>
+                  <option value="اصلی" selected>اصلی</option>
+                  <option value="تخصصی">تخصصی</option>
+                  <option value="آزمایشگاه">آزمایشگاه / کارگاه</option>
+                </select>
+              </div>
+              <div class="input-field" style="flex: 1.5; min-width: 150px;">
+                <label>پیش‌نیاز / هم‌نیاز</label>
+                <input type="text" id="chCoursePrereq" placeholder="مثال: فیزیک ۱ و ریاضی ۲">
+              </div>
+              <div class="input-field" style="flex: 1; min-width: 120px;">
+                <label>وضعیت</label>
+                <select id="chCourseStatus">
+                  <option value="passed">پاس‌شده ✅</option>
+                  <option value="current">در حال اخذ 🔄</option>
+                  <option value="remaining">باقی‌مانده ⏳</option>
+                </select>
+              </div>
+              <button class="btn-sch btn-sch-primary" onclick="addChartCourse()">+ ثبت در چارت</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">📋 لیست دروس ثبت‌شده در چارت و پیش‌نیازها</h3>
+            <div id="chartCoursesList" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- تب ۵: ردیاب تمرین‌ها، کوئیزها و تحویل گزارش‌کار -->
+      <section id="deadlines" class="tool-section">
+        <div class="schedule-app-container">
+          <div class="schedule-header-bar">
+            <div class="schedule-header-title">
+              <h2>ردیاب تمرین‌ها، کوئیزها و تحویل گزارش‌کار</h2>
+              <span>شمارشگر معکوس هوشمند تا موعد تحویل پروژه‌ها، گزارش‌کار آزمایشگاه و امتحانات</span>
+            </div>
+          </div>
+
+          <div class="form-panel">
+            <div class="form-main-row">
+              <div class="input-field" style="flex: 2; min-width: 180px;">
+                <label>عنوان تحویل / آزمون</label>
+                <input type="text" id="dlTitle" placeholder="مثال: گزارش‌کار آزمایشگاه شماره ۳">
+              </div>
+              <div class="input-field" style="flex: 1.2; min-width: 140px;">
+                <label>نام درس مرتبط</label>
+                <input type="text" id="dlCourse" placeholder="مثال: آز فیزیک / بلورشناسی">
+              </div>
+              <div class="input-field" style="flex: 1; min-width: 130px;">
+                <label>دسته‌بندی</label>
+                <select id="dlType">
+                  <option value="گزارش‌کار">🔬 گزارش‌کار آزمایشگاه</option>
+                  <option value="تمرین">📝 تحویل تمرین</option>
+                  <option value="کوئیز">⚡ کوئیز / میان‌ترم</option>
+                  <option value="پروژه">💻 پروژه درسی</option>
+                </select>
+              </div>
+              <div class="input-field" style="flex: 1.2; min-width: 145px;">
+                <label>تاریخ تحویل</label>
+                <input type="date" id="dlDate" dir="ltr">
+              </div>
+              <button class="btn-sch btn-sch-primary" onclick="addDeadlineItem()">+ ثبت ددلاین</button>
+            </div>
+          </div>
+
+          <div id="deadlinesContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+      </section>
+
+      <!-- تب ۶: دفترچه تلفن اساتید و قالب آماده ایمیل رسمی -->
+      <section id="professors" class="tool-section">
+        <div class="schedule-app-container">
+          <div class="schedule-header-bar">
+            <div class="schedule-header-title">
+              <h2>دفترچه اطلاعات اساتید و مولد ایمیل رسمی دانشگاهی</h2>
+              <span>ذخیره ایمیل، شماره اتاق و ساعت حضور (Office Hours) + تولید خودکار ایمیل محترمانه به استاد</span>
+            </div>
+          </div>
+
+          <div class="lounge-grid" style="margin-top: 0;">
+            <!-- ستون راست: دفترچه اساتید -->
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <div class="form-panel">
+                <div style="font-size: 0.85rem; font-weight: 700; color: #fff;">➕ افزودن استاد جدید</div>
+                <div class="advanced-grid">
+                  <div class="input-field">
+                    <label>نام استاد</label>
+                    <input type="text" id="profName" placeholder="مثال: دکتر احمدی">
+                  </div>
+                  <div class="input-field">
+                    <label>ایمیل دانشگاهی</label>
+                    <input type="text" id="profEmail" placeholder="example@iut.ac.ir" dir="ltr">
+                  </div>
+                  <div class="input-field">
+                    <label>دانشکده و شماره اتاق</label>
+                    <input type="text" id="profRoom" placeholder="مثال: طبقه ۲ - اتاق ۲۱۴">
+                  </div>
+                  <div class="input-field">
+                    <label>ساعت حضور و رفع اشکال</label>
+                    <input type="text" id="profHours" placeholder="مثال: دوشنبه‌ها ۱۰ تا ۱۲">
+                  </div>
+                </div>
+                <button class="btn-sch btn-sch-primary" onclick="addProfessor()">+ ذخیره در لیست اساتید</button>
+              </div>
+
+              <div class="card">
+                <h3 class="card-title">👨‍🏫 لیست اساتید من</h3>
+                <div id="professorsList" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;"></div>
+              </div>
+            </div>
+
+            <!-- ستون چپ: قالب آماده ایمیل رسمی -->
+            <div class="card" style="display: flex; flex-direction: column; gap: 12px;">
+              <h3 class="card-title">✉️ مولد هوشمند ایمیل رسمی به استاد</h3>
+              <div class="advanced-grid">
+                <div class="input-field">
+                  <label>موضوع درخواست</label>
+                  <select id="emailTplType" class="std-input" onchange="generateOfficialEmail()">
+                    <option value="deadline">درخواست تمدید مهلت تمرین / گزارش‌کار</option>
+                    <option value="grade">درخواست محترمانه بازبینی نمره</option>
+                    <option value="meeting">هماهنگی وقت ملاقات حضوری (Office Hours)</option>
+                    <option value="recom">درخواست توصیه‌نامه علمی (Recommendation)</option>
+                    <option value="override">درخواست مجوز اخذ درس / هم‌نیازی</option>
+                  </select>
+                </div>
+                <div class="input-field">
+                  <label>نام استاد مخاطب</label>
+                  <input type="text" id="emailProfName" class="std-input" placeholder="مثال: دکتر رضایی" oninput="generateOfficialEmail()">
+                </div>
+                <div class="input-field">
+                  <label>نام درس</label>
+                  <input type="text" id="emailCourseName" class="std-input" placeholder="مثال: بلورشناسی" oninput="generateOfficialEmail()">
+                </div>
+                <div class="input-field">
+                  <label>نام و شماره دانشجویی شما</label>
+                  <input type="text" id="emailStudentInfo" class="std-input" placeholder="نام و شماره دانشجویی..." oninput="generateOfficialEmail()">
+                </div>
+              </div>
+
+              <textarea id="emailOutputArea" style="width: 100%; height: 210px; background: #080c14; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 12px; font-size: 0.82rem; line-height: 1.75; resize: none; outline: none;"></textarea>
+
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn-sch btn-sch-primary" style="flex: 1;" onclick="copyEmailTemplate()">📋 کپی متن ایمیل</button>
+                <a href="https://webmail.iut.ac.ir" target="_blank" rel="noopener" class="btn-sch btn-sch-secondary" style="text-decoration: none;">🌐 باز کردن وب‌میل IUT</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- تب ۷: ماشین‌حساب، تبدیل واحد مهندسی و فرمول‌نامه (Cheat Sheet) -->
+      <section id="eng-tools" class="tool-section">
+        <div class="schedule-app-container">
+          <div class="schedule-header-bar">
+            <div class="schedule-header-title">
+              <h2>جعبه ابزار محاسباتی مهندسی، تبدیل واحد و فرمول‌نامه (Cheat Sheet)</h2>
+              <span>ماشین‌حساب علمی، تبدیل سریع واحدهای آزمایشگاهی/مهندسی و تخته سنجاق فرمول‌های مهم ترم</span>
+            </div>
+          </div>
+
+          <div class="lounge-grid" style="margin-top: 0;">
+            <!-- ماشین‌حساب علمی -->
+            <div class="card">
+              <h3 class="card-title">🖩 ماشین‌حساب علمی سریع</h3>
+              <input type="text" id="sciCalcDisplay" dir="ltr" placeholder="0" style="width: 100%; height: 48px; background: #080c14; border: 1px solid var(--border-accent); border-radius: 8px; color: var(--accent); font-family: 'Orbitron', monospace; font-size: 1.25rem; font-weight: 800; padding: 0 14px; text-align: left; outline: none;">
+              <div class="calc-grid" dir="ltr">
+                <button class="calc-btn op" onclick="sciInsert('Math.sin(')">sin</button>
+                <button class="calc-btn op" onclick="sciInsert('Math.cos(')">cos</button>
+                <button class="calc-btn op" onclick="sciInsert('Math.tan(')">tan</button>
+                <button class="calc-btn op" style="color:var(--danger)" onclick="sciClear()">AC</button>
+
+                <button class="calc-btn op" onclick="sciInsert('Math.log10(')">log</button>
+                <button class="calc-btn op" onclick="sciInsert('Math.sqrt(')">√</button>
+                <button class="calc-btn op" onclick="sciInsert('**')">x^y</button>
+                <button class="calc-btn op" onclick="sciInsert('Math.PI')">π</button>
+
+                <button class="calc-btn" onclick="sciInsert('7')">7</button>
+                <button class="calc-btn" onclick="sciInsert('8')">8</button>
+                <button class="calc-btn" onclick="sciInsert('9')">9</button>
+                <button class="calc-btn op" onclick="sciInsert('/')">÷</button>
+
+                <button class="calc-btn" onclick="sciInsert('4')">4</button>
+                <button class="calc-btn" onclick="sciInsert('5')">5</button>
+                <button class="calc-btn" onclick="sciInsert('6')">6</button>
+                <button class="calc-btn op" onclick="sciInsert('*')">×</button>
+
+                <button class="calc-btn" onclick="sciInsert('1')">1</button>
+                <button class="calc-btn" onclick="sciInsert('2')">2</button>
+                <button class="calc-btn" onclick="sciInsert('3')">3</button>
+                <button class="calc-btn op" onclick="sciInsert('-')">−</button>
+
+                <button class="calc-btn" onclick="sciInsert('0')">0</button>
+                <button class="calc-btn" onclick="sciInsert('.')">.</button>
+                <button class="calc-btn" onclick="sciInsert(')')">)</button>
+                <button class="calc-btn op" onclick="sciInsert('+')">+</button>
+              </div>
+              <button class="btn-sch btn-sch-primary" style="width: 100%; margin-top: 8px;" onclick="sciEvaluate()">= محاسبه نتیجه</button>
+            </div>
+
+            <!-- تبدیل واحد مهندسی و آزمایشگاهی -->
+            <div class="card" style="display: flex; flex-direction: column; gap: 12px;">
+              <h3 class="card-title">⚖️ تبدیل واحد سریع مهندسی و آزمایشگاهی</h3>
+              <div class="input-field">
+                <label>کمیت مورد نظر</label>
+                <select id="convCategory" class="std-input" onchange="populateConverterUnits()">
+                  <option value="length">طول و مقیاس اتمی (متر، میلی‌متر، میکرومتر، نانومتر، آنگستروم Å)</option>
+                  <option value="pressure">فشار (پاسکال، بار، اتمسفر، میلی‌متر جیوه، PSI)</option>
+                  <option value="energy">انرژی (ژول، کیلوژول، الکترون‌ولت eV، کالری)</option>
+                  <option value="temp">دما (سلسیوس °C، کلوین K، فارنهایت °F)</option>
+                  <option value="angle">زاویه (درجه °، رادیان rad)</option>
+                </select>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="input-field">
+                  <label>از واحد</label>
+                  <select id="convFromUnit" class="std-input" onchange="runUnitConversion()"></select>
+                </div>
+                <div class="input-field">
+                  <label>به واحد</label>
+                  <select id="convToUnit" class="std-input" onchange="runUnitConversion()"></select>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end;">
+                <div class="input-field">
+                  <label>مقدار ورودی</label>
+                  <input type="number" id="convInputVal" value="1" step="any" class="std-input" dir="ltr" oninput="runUnitConversion()">
+                </div>
+                <div class="input-field">
+                  <label>نتیجه تبدیل</label>
+                  <input type="text" id="convOutputVal" readonly class="std-input" dir="ltr" style="color: var(--accent); font-weight: 800; font-family: monospace;">
+                </div>
+              </div>
+              <div style="background: #080c14; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; font-size: 0.74rem; color: var(--text-muted); line-height: 1.6;" dir="ltr">
+                <strong style="color: var(--accent);">Physical Constants:</strong><br>
+                h = 6.626×10⁻³⁴ J·s &nbsp;|&nbsp; k_B = 1.38×10⁻²³ J/K &nbsp;|&nbsp; N_A = 6.022×10²³ mol⁻¹ &nbsp;|&nbsp; R = 8.314 J/(mol·K)
+              </div>
+            </div>
+          </div>
+
+          <!-- فرمول‌نامه (Cheat Sheet) -->
+          <div class="form-panel">
+            <div style="font-size: 0.88rem; font-weight: 700; color: #fff;">📌 تخته سنجاق فرمول‌ها و نکات کلیدی ترم (Cheat Sheet)</div>
+            <div class="form-main-row">
+              <div class="input-field" style="flex: 1.2; min-width: 150px;">
+                <label>عنوان / نام درس</label>
+                <input type="text" id="csTitle" placeholder="مثال: قانون براگ (بلورشناسی)">
+              </div>
+              <div class="input-field" style="flex: 3; min-width: 240px;">
+                <label>فرمول یا نکته کلیدی</label>
+                <input type="text" id="csFormula" placeholder="مثال: nλ = 2d·sin(θ)  |  فاصله صفحات شبکه مکعبی: d = a / √(h²+k²+l²)">
+              </div>
+              <button class="btn-sch btn-sch-primary" onclick="addCheatSheetItem()">+ سنجاق کردن فرمول</button>
+            </div>
+            <div class="grid-layout" id="cheatSheetGrid" style="margin-top: 8px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- تب ۸: اتاق تمرکز و آرامش ذهن -->
+      <section id="quick-notes" class="tool-section">
+        <div class="lounge-hero">
+          <div class="peace-title-box">
+            <h3>اینجا در آرامشی...</h3>
+            <div class="peace-subtitle">اتاق تمرکز و آرامش ذهن | دانشگاه صنعتی اصفهان</div>
+          </div>
+          <div class="quote-box">
+            <div class="quote-text" id="zenQuoteText">«دریغ است ایران که ویران شود / کنام پلنگان و شیران شود»</div>
+            <div class="quote-footer">
+              <div class="quote-author" id="zenQuoteAuthor">فردوسی (شاهنامه)</div>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-quote-refresh" onclick="copyCurrentQuote()">کپی</button>
+                <button class="btn-quote-refresh" onclick="rotateQuote()">نقل‌قول بعدی ↻</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lounge-grid">
+          <div class="breathe-card">
+            <div style="font-size: 0.92rem; font-weight: 700; color: #cbd5e1;">🧘‍♂️ تمرین تنفس عمیق (ضد استرس و افزایش تمرکز)</div>
+            <div class="breathe-circle-container">
+              <div class="breathe-outer-glow" id="breatheGlow"></div>
+              <div class="breathe-circle" id="breatheCircle">
+                <span class="breathe-status-text" id="breatheText">شروع</span>
+                <span class="breathe-timer-sub" id="breatheSubTimer"></span>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%;">
+              <button class="btn-sch btn-sch-primary" id="btnBreatheToggle" onclick="toggleBreathing()">شروع چرخه تنفس ۴ ثانیه‌ای</button>
+              <div class="ambient-bar">
+                <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">🎧 صدای محیطی مطالعه:</span>
+                <button class="card-btn" id="btnAmbientNoise" style="padding: 4px 10px; font-size: 0.72rem;" onclick="toggleAmbientSound()">پخش صدای باران / نویز آرام</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="pomodoro-card">
+            <div class="pomo-modes">
+              <button class="pomo-mode-btn active" onclick="setPomoMode(25, this)">تمرکز (۲۵ د)</button>
+              <button class="pomo-mode-btn" onclick="setPomoMode(5, this)">استراحت کوتاه (۵ د)</button>
+              <button class="pomo-mode-btn" onclick="setPomoMode(15, this)">استراحت طولانی (۱۵ د)</button>
+            </div>
+            <div class="pomo-custom-input-box">
+              <span style="font-size: 0.76rem; color: var(--text-muted);">زمان دلخواه (دقیقه):</span>
+              <input type="number" id="customPomoMinutes" min="1" max="180" value="25" onchange="setCustomPomoTime(this.value)">
+            </div>
+            <div class="pomodoro-timer-digits" id="pomoTimerDisplay">25:00</div>
+            <div style="width: 85%; max-width: 260px;">
+              <div class="gpa-progress-track" style="height: 6px;">
+                <div class="gpa-progress-bar" id="pomoProgressBar" style="width: 100%; background: var(--accent);"></div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn-sch btn-sch-primary" id="btnPomoStart" onclick="togglePomodoro()">شروع تمرکز</button>
+              <button class="btn-sch btn-sch-secondary" onclick="resetPomodoro()">بازنشانی</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="lounge-grid">
+          <div class="card" style="display: flex; flex-direction: column; gap: 12px;">
+            <h3 class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>📝 تسک‌ها و برنامه‌های درسی امروز</span>
+              <span id="todoCount" style="font-size: 0.75rem; color: var(--accent);">0 مورد</span>
+            </h3>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="todoInput" placeholder="تکلیف یا برنامه جدید را بنویسید (Enter)..." class="gpa-input" style="flex: 1; height: 38px; font-weight: 500;">
+              <button class="btn-sch btn-sch-primary" style="height: 38px;" onclick="addTodo()">افزودن</button>
+            </div>
+            <div id="todoList" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto;"></div>
+          </div>
+
+          <div class="card" style="display: flex; flex-direction: column; gap: 12px;">
+            <h3 class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>💡 چک‌نویس سریع و تخلیه ذهن (Brain Dump)</span>
+              <span id="scratchpadCounter" style="font-size: 0.72rem; color: var(--text-muted);">ذخیره خودکار</span>
+            </h3>
+            <textarea id="scratchpadArea" placeholder="افکار، نکات مهم کلاسی، ایده‌ها یا تکالیف پراکنده را اینجا بنویسید..." style="width: 100%; height: 185px; background: #080c14; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 12px; font-size: 0.84rem; line-height: 1.6; resize: none; outline: none;" oninput="saveScratchpad()"></textarea>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    let toastTimeout = null;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      if (!toast) return;
+      toast.innerText = msg;
+      toast.classList.add('show');
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.remove('show'), 3600);
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const toggleBtn = document.getElementById('menuToggleBtn');
+      sidebar.classList.toggle('hidden');
+      toggleBtn.classList.toggle('closed');
+    }
+
+    function switchTool(toolId, element) {
+      document.querySelectorAll('.tool-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+
+      const targetSection = document.getElementById(toolId);
+      if (targetSection) targetSection.classList.add('active');
+      if (element) {
+        element.classList.add('active');
+        const spanText = element.querySelector('span') ? element.querySelector('span').innerText : element.innerText;
+        document.getElementById('headerTitle').innerText = spanText.replace(/^[^\s]+\s/, '');
+      }
+
+      if (window.innerWidth <= 860) {
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('menuToggleBtn');
+        if (!sidebar.classList.contains('hidden')) {
+          sidebar.classList.add('hidden');
+          toggleBtn.classList.add('closed');
+        }
+      }
+
+      if (toolId === 'curriculum') { renderPlanTabs(); renderSchedule(); }
+      else if (toolId === 'gpa-calc') { renderGpaTerms(); }
+      else if (toolId === 'degree-chart') { renderDegreeChart(); }
+      else if (toolId === 'deadlines') { renderDeadlines(); }
+      else if (toolId === 'professors') { renderProfessors(); generateOfficialEmail(); }
+      else if (toolId === 'eng-tools') { populateConverterUnits(); renderCheatSheet(); }
+      else if (toolId === 'quick-notes') { initLounge(); }
+      else if (toolId === 'home') { updateHomeDashboardStats(); checkDiningAlert(); }
+    }
+
+    function updateLiveHeaderClock() {
+      const now = new Date();
+      const el = document.getElementById('headerLiveClock');
+      if (el) el.innerText = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+
+      const dateEl = document.getElementById('headerPersianDate');
+      if (dateEl && !dateEl.dataset.initialized) {
+        try {
+          dateEl.innerText = `📅 ${new Intl.DateTimeFormat('fa-IR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(now)}`;
+          dateEl.dataset.initialized = 'true';
+        } catch (e) {}
+      }
+    }
+    setInterval(updateLiveHeaderClock, 1000);
+    updateLiveHeaderClock();
+
+    /* یادآور هوشمند رزرو غذا (سه‌شنبه = 2، چهارشنبه = 3 در جاوااسکریپت) */
+    function checkDiningAlert() {
+      const banner = document.getElementById('diningAlertBanner');
+      const title = document.getElementById('diningAlertTitle');
+      const desc = document.getElementById('diningAlertDesc');
+      if (!banner) return;
+      const day = new Date().getDay();
+      if (day === 2 || day === 3) {
+        banner.classList.add('urgent');
+        title.innerText = '⚠️ هشدار مهم: رزرو غذای هفته بعد در سامانه ستاره فراموش نشه!';
+        desc.innerText = 'امروز روز رزرو تغذیه دانشگاه صنعتی اصفهان است؛ قبل از بسته شدن اتوماسیون ستاره اقدام کنید.';
+      } else {
+        banner.classList.remove('urgent');
+      }
+    }
+
+    /* ------------------------------------------------------------- */
+    /* ماژول محاسبه‌گر معدل + شبیه‌ساز حذف اضطراری (W) و نمودار روند */
+    /* ------------------------------------------------------------- */
+    let gpaState = {
+      mode: 'term',
+      terms: [
+        { id: 1, name: 'ترم اول', courses: [{ id: 101, name: '', units: 3, grade: '', category: 'اصلی', withdrawn: false, retake: false }] },
+        { id: 2, name: 'ترم دوم', courses: [{ id: 201, name: '', units: 3, grade: '', category: 'اصلی', withdrawn: false, retake: false }] }
+      ]
+    };
+
+    function initGpaData() {
+      const saved = localStorage.getItem('academic_assistant_state_v6');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          gpaState.mode = parsed.mode || 'term';
+          document.getElementById('targetGpaInput').value = parsed.targetGpa || 17.0;
+          if (parsed.terms && parsed.terms.length > 0) gpaState.terms = parsed.terms;
+        } catch(e) {}
+      }
+      syncGpaModeUi();
+      renderGpaTerms();
+    }
+
+    function saveGpaState() {
+      const targetGpa = parseFloat(document.getElementById('targetGpaInput').value) || 17.0;
+      localStorage.setItem('academic_assistant_state_v6', JSON.stringify({
+        mode: gpaState.mode,
+        targetGpa: targetGpa,
+        terms: gpaState.terms
+      }));
+      updateHomeDashboardStats();
+    }
+
+    function switchGpaMode(mode) {
+      if (gpaState.mode === mode) return;
+      gpaState.mode = mode;
+      syncGpaModeUi();
+      renderGpaTerms();
+      saveGpaState();
+    }
+
+    function syncGpaModeUi() {
+      const btnTerm = document.getElementById('btnGpaTerm');
+      const btnCgpa = document.getElementById('btnGpaCgpa');
+      const countBox = document.getElementById('cgpaCountBox');
+      if (gpaState.mode === 'term') {
+        btnTerm.classList.add('active'); btnCgpa.classList.remove('active'); countBox.style.display = 'none';
+      } else {
+        btnCgpa.classList.add('active'); btnTerm.classList.remove('active'); countBox.style.display = 'flex';
+        document.getElementById('gpaTermsCount').value = gpaState.terms.length;
+      }
+    }
+
+    function generateGpaTermsFromCount() {
+      const count = Math.min(Math.max(parseInt(document.getElementById('gpaTermsCount').value) || 1, 1), 12);
+      document.getElementById('gpaTermsCount').value = count;
+      const newTerms = [];
+      for (let i = 1; i <= count; i++) {
+        if (gpaState.terms[i-1]) newTerms.push(gpaState.terms[i-1]);
+        else newTerms.push({ id: i, name: `ترم ${i}`, courses: [{ id: Date.now() + i, name: '', units: 3, grade: '', category: 'اصلی', withdrawn: false, retake: false }] });
+      }
+      gpaState.terms = newTerms;
+      renderGpaTerms();
+      saveGpaState();
+    }
+
+    function changeTableUnit(tIdx, cIdx, delta) {
+      let currentVal = parseInt(gpaState.terms[tIdx].courses[cIdx].units) || 1;
+      let newVal = Math.min(Math.max(currentVal + delta, 1), 6);
+      gpaState.terms[tIdx].courses[cIdx].units = newVal;
+      renderGpaTerms();
+      saveGpaState();
+    }
+
+    function toggleCourseSimFlag(tIdx, cIdx, flag) {
+      const c = gpaState.terms[tIdx].courses[cIdx];
+      c[flag] = !c[flag];
+      if (flag === 'withdrawn' && c.withdrawn) c.retake = false;
+      if (flag === 'retake' && c.retake) c.withdrawn = false;
+      renderGpaTerms();
+      saveGpaState();
+      calculateGpaReport(true);
+    }
+
+    function computeSingleTermStats(term) {
+      let u = 0, pts = 0;
+      term.courses.forEach(c => {
+        if (c.withdrawn) return;
+        const units = parseInt(c.units) || 1;
+        if (c.grade !== '' && c.grade !== null && !isNaN(c.grade)) {
+          const g = Math.min(Math.max(parseFloat(c.grade), 0), 20);
+          u += units;
+          pts += g * units;
+        }
+      });
+      return { units: u, gpa: u > 0 ? (pts / u).toFixed(2) : '--', rawGpa: u > 0 ? (pts / u) : null };
+    }
+
+    function renderGpaTerms() {
+      const container = document.getElementById('gpaTermsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const termsToRender = gpaState.mode === 'term' ? [gpaState.terms[0]] : gpaState.terms;
+
+      termsToRender.forEach((term, tIdx) => {
+        const card = document.createElement('div');
+        card.className = 'gpa-term-card';
+        const tStats = computeSingleTermStats(term);
+
+        let moveBtns = '';
+        if (gpaState.mode === 'cgpa') {
+          moveBtns = `
+            <div class="term-reorder-group" dir="ltr">
+              ${tIdx > 0 ? `<button type="button" class="btn-term-move" onclick="moveGpaTerm(${tIdx}, -1)" title="بالا">▲</button>` : ''}
+              ${tIdx < termsToRender.length - 1 ? `<button type="button" class="btn-term-move" onclick="moveGpaTerm(${tIdx}, 1)" title="پایین">▼</button>` : ''}
+            </div>
+          `;
+        }
+
+        let html = `
+          <div class="gpa-term-header">
+            <input type="text" value="${term.name}" oninput="updateGpaTermName(${tIdx}, this.value)" class="gpa-term-title-input">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              ${moveBtns}
+              <span id="termLiveBadge_${tIdx}" style="font-size: 0.72rem; color: var(--text-muted); background: #080c14; border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 5px;">معدل ترم: <strong style="color:var(--accent);" dir="ltr">${tStats.gpa}</strong> (${tStats.units} واحد)</span>
+            </div>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="gpa-table">
+              <thead>
+                <tr>
+                  <th style="width: 32%;">نام درس</th>
+                  <th style="width: 18%;">نوع درس</th>
+                  <th style="width: 16%; text-align: center;">واحد</th>
+                  <th style="width: 16%; text-align: center;">نمره</th>
+                  <th style="width: 12%; text-align: center;">شبیه‌ساز</th>
+                  <th style="width: 6%; text-align: center;">حذف</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        term.courses.forEach((c, cIdx) => {
+          const cat = c.category || 'اصلی';
+          html += `
+            <tr class="${c.withdrawn ? 'withdrawn-row' : ''}">
+              <td><input type="text" value="${c.name}" placeholder="نام درس..." oninput="updateGpaCourse(${tIdx}, ${cIdx}, 'name', this.value)"></td>
+              <td>
+                <select onchange="updateGpaCourse(${tIdx}, ${cIdx}, 'category', this.value)">
+                  <option value="عمومی" ${cat==='عمومی'?'selected':''}>عمومی</option>
+                  <option value="پایه" ${cat==='پایه'?'selected':''}>پایه</option>
+                  <option value="اصلی" ${cat==='اصلی'?'selected':''}>اصلی</option>
+                  <option value="تخصصی" ${cat==='تخصصی'?'selected':''}>تخصصی</option>
+                  <option value="آزمایشگاه" ${cat==='آزمایشگاه'?'selected':''}>آزمایشگاه</option>
+                </select>
+              </td>
+              <td style="text-align: center;">
+                <div class="table-unit-stepper">
+                  <button type="button" onclick="changeTableUnit(${tIdx}, ${cIdx}, -1)">−</button>
+                  <div class="table-unit-stepper-val">${c.units || 3}</div>
+                  <button type="button" onclick="changeTableUnit(${tIdx}, ${cIdx}, 1)">+</button>
+                </div>
+              </td>
+              <td style="text-align: center;">
+                <input type="number" step="0.01" min="0" max="20" value="${c.grade !== '' ? c.grade : ''}" placeholder="نمره" oninput="updateGpaCourse(${tIdx}, ${cIdx}, 'grade', this.value)" style="width: 72px;" dir="ltr">
+              </td>
+              <td style="text-align: center; white-space: nowrap;">
+                <button type="button" class="sim-tag-btn ${c.withdrawn ? 'active-w' : ''}" onclick="toggleCourseSimFlag(${tIdx}, ${cIdx}, 'withdrawn')" title="شبیه‌سازی حذف اضطراری (W)">W</button>
+                <button type="button" class="sim-tag-btn ${c.retake ? 'active-retake' : ''}" onclick="toggleCourseSimFlag(${tIdx}, ${cIdx}, 'retake')" title="شبیه‌سازی تکرار درس / جبران نمره">↻</button>
+              </td>
+              <td style="text-align: center;"><button class="btn-icon btn-delete" onclick="deleteGpaCourse(${tIdx}, ${cIdx})">✕</button></td>
+            </tr>
+          `;
+        });
+
+        html += `</tbody></table></div>
+          <div style="padding-top: 4px;"><button class="card-btn" onclick="addGpaCourse(${tIdx})">+ افزودن درس جدید</button></div>`;
+        card.innerHTML = html;
+        container.appendChild(card);
+      });
+    }
+
+    function updateGpaTermName(tIdx, val) { gpaState.terms[tIdx].name = val; saveGpaState(); }
+    function updateGpaCourse(tIdx, cIdx, field, val) {
+      if (field === 'units') gpaState.terms[tIdx].courses[cIdx].units = parseInt(val) || 1;
+      else if (field === 'grade') gpaState.terms[tIdx].courses[cIdx].grade = val === '' ? '' : parseFloat(val);
+      else gpaState.terms[tIdx].courses[cIdx][field] = val;
+      saveGpaState();
+      const badge = document.getElementById(`termLiveBadge_${tIdx}`);
+      if (badge) {
+        const st = computeSingleTermStats(gpaState.terms[tIdx]);
+        badge.innerHTML = `معدل ترم: <strong style="color:var(--accent);" dir="ltr">${st.gpa}</strong> (${st.units} واحد)`;
+      }
+    }
+    function addGpaCourse(tIdx) {
+      gpaState.terms[tIdx].courses.push({ id: Date.now(), name: '', units: 3, grade: '', category: 'اصلی', withdrawn: false, retake: false });
+      renderGpaTerms();
+      saveGpaState();
+    }
+    function deleteGpaCourse(tIdx, cIdx) {
+      gpaState.terms[tIdx].courses.splice(cIdx, 1);
+      if (gpaState.terms[tIdx].courses.length === 0) {
+        gpaState.terms[tIdx].courses.push({ id: Date.now(), name: '', units: 3, grade: '', category: 'اصلی', withdrawn: false, retake: false });
+      }
+      renderGpaTerms();
+      saveGpaState();
+    }
+    function moveGpaTerm(tIdx, direction) {
+      const targetIdx = tIdx + direction;
+      if (targetIdx >= 0 && targetIdx < gpaState.terms.length) {
+        const temp = gpaState.terms[tIdx];
+        gpaState.terms[tIdx] = gpaState.terms[targetIdx];
+        gpaState.terms[targetIdx] = temp;
+        gpaState.terms.forEach((t, i) => t.id = i + 1);
+        saveGpaState();
+        renderGpaTerms();
+      }
+    }
+
+    const sarcasticJokes = [
+      "نکنه خواب موندی میانترم رو؟ 😴", "چطوری تونستی بیافتی این درسو؟ 🤦‍♂️",
+      "استاد باهات لج بود یا خودت نخوندی؟ 🤨", "یه ترم دیگه مهمون این درسی! 😅"
+    ];
+
+    function renderGpaTrendSvg(termsData) {
+      const chartCard = document.getElementById('gpaTrendChartCard');
+      const container = document.getElementById('gpaTrendSvgContainer');
+      const slopeEl = document.getElementById('gpaTrendSlopeText');
+      if (!chartCard || !container) return;
+
+      const validTerms = termsData.filter(t => t.rawGpa !== null);
+      if (gpaState.mode !== 'cgpa' || validTerms.length < 2) {
+        chartCard.style.display = 'none';
+        return;
+      }
+      chartCard.style.display = 'flex';
+
+      const diff = validTerms[validTerms.length - 1].rawGpa - validTerms[0].rawGpa;
+      slopeEl.innerText = diff >= 0 ? `روند صعودی (+${diff.toFixed(2)}) 📈` : `روند نزولی (${diff.toFixed(2)}) 📉`;
+      slopeEl.style.color = diff >= 0 ? 'var(--success)' : 'var(--danger)';
+
+      const w = 310, h = 115, padX = 28, padY = 18;
+      const minG = Math.max(0, Math.floor(Math.min(...validTerms.map(t => t.rawGpa)) - 1));
+      const maxG = Math.min(20, Math.ceil(Math.max(...validTerms.map(t => t.rawGpa)) + 1));
+      const range = Math.max(1, maxG - minG);
+
+      const pts = validTerms.map((t, idx) => {
+        const x = padX + (idx / (validTerms.length - 1)) * (w - 2 * padX);
+        const y = (h - padY) - ((t.rawGpa - minG) / range) * (h - 2 * padY);
+        return { x, y, label: t.name, val: t.rawGpa.toFixed(2) };
+      });
+
+      const polylinePoints = pts.map(p => `${p.x},${p.y}`).join(' ');
+      const areaPoints = `${pts[0].x},${h - padY} ${polylinePoints} ${pts[pts.length - 1].x},${h - padY}`;
+
+      let circlesHtml = pts.map(p => `
+        <circle cx="${p.x}" cy="${p.y}" r="4" fill="#38bdf8" stroke="#060b16" stroke-width="2"/>
+        <text x="${p.x}" y="${p.y - 7}" fill="#f1f5f9" font-size="9" font-weight="700" text-anchor="middle" font-family="Orbitron">${p.val}</text>
+      `).join('');
+
+      container.innerHTML = `
+        <svg viewBox="0 0 ${w} ${h}" width="100%" height="100%">
+          <defs>
+            <linearGradient id="gpaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.38"/>
+              <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.0"/>
+            </linearGradient>
+          </defs>
+          <polygon points="${areaPoints}" fill="url(#gpaGrad)"/>
+          <polyline fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="${polylinePoints}"/>
+          ${circlesHtml}
+        </svg>
+      `;
+    }
+
+    function calculateGpaReport(silent = false) {
+      const targetGpa = parseFloat(document.getElementById('targetGpaInput').value) || 17.0;
+      document.getElementById('txtTargetGpaVal').innerText = targetGpa.toFixed(2);
+
+      let totalGradedUnits = 0, totalGradedPoints = 0, ungradedUnits = 0;
+      let withdrawnUnits = 0, retakeUnits = 0;
+      let allCoursesFlattened = [], failedCourses = [], termTrendList = [];
+      const termsToCalculate = gpaState.mode === 'term' ? [gpaState.terms[0]] : gpaState.terms;
+
+      termsToCalculate.forEach(term => {
+        const tStat = computeSingleTermStats(term);
+        termTrendList.push({ name: term.name, rawGpa: tStat.rawGpa });
+
+        term.courses.forEach(course => {
+          const units = parseInt(course.units) || 1;
+          const cleanName = course.name.trim() || `درس #${course.id.toString().slice(-3)}`;
+          if (course.withdrawn) {
+            withdrawnUnits += units;
+            return;
+          }
+          if (course.retake) retakeUnits += units;
+
+          if (course.grade !== '' && course.grade !== null && !isNaN(course.grade)) {
+            const grade = Math.min(Math.max(parseFloat(course.grade), 0), 20);
+            totalGradedUnits += units;
+            totalGradedPoints += (grade * units);
+            allCoursesFlattened.push({ name: cleanName, units, grade });
+            if (grade < 10) failedCourses.push(cleanName);
+          } else if (course.name.trim() !== '') {
+            ungradedUnits += units;
+          }
+        });
+      });
+
+      if (totalGradedUnits === 0) {
+        if (!silent) showToast('حداقل نمره یک درس غیرحذفی را وارد کنید.');
+        return;
+      }
+
+      const computedGpa = totalGradedPoints / totalGradedUnits;
+      document.getElementById('gpaPlaceholder').style.display = 'none';
+      document.getElementById('gpaResultBox').style.display = 'flex';
+      document.getElementById('gpaComputedValue').innerText = computedGpa.toFixed(2);
+      document.getElementById('gpaTotalUnitsValue').innerText = totalGradedUnits;
+
+      const badge = document.getElementById('gpaStatusBadge');
+      const confContainer = document.getElementById('gpaConfettiContainer');
+      confContainer.innerHTML = '';
+
+      if (computedGpa >= 17.0) {
+        badge.innerText = computedGpa >= 18 ? "رتبه برتر آکادمیک 🌟" : "وضعیت عالی (ممتاز) 👏";
+        badge.style.color = '#10b981'; badge.style.borderColor = '#10b981';
+      } else if (computedGpa < 12.0) {
+        badge.innerText = "هشدار مشروطی ⚠️";
+        badge.style.color = '#f43f5e'; badge.style.borderColor = '#f43f5e';
+      } else {
+        badge.innerText = "وضعیت عادی و مناسب 👍";
+        badge.style.color = '#38bdf8'; badge.style.borderColor = '#1e3a8a';
+      }
+
+      const progressBar = document.getElementById('gpaProgressBar');
+      const targetRatio = Math.min((computedGpa / targetGpa) * 100, 100);
+      progressBar.style.width = `${targetRatio}%`;
+      document.getElementById('gpaTargetPercent').innerText = `${targetRatio.toFixed(0)}%`;
+      document.getElementById('gpaScale4Value').innerText = `${((computedGpa / 20) * 4.0).toFixed(2)} / 4.0`;
+
+      renderGpaTrendSvg(termTrendList);
+
+      const passed = allCoursesFlattened.filter(c => c.grade >= 10);
+      const failed = allCoursesFlattened.filter(c => c.grade < 10);
+
+      let summaryHtml = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: center;">
+          <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 6px; padding: 6px;">
+            <span style="font-weight: 800; color: #10b981; font-size: 0.95rem;">${passed.length} درس</span>
+            <span style="display: block; font-size: 0.68rem; color: #10b981;">پاس‌شده ✅</span>
+          </div>
+          <div style="background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); border-radius: 6px; padding: 6px;">
+            <span style="font-weight: 800; color: #f43f5e; font-size: 0.95rem;">${failed.length} درس</span>
+            <span style="display: block; font-size: 0.68rem; color: #f43f5e;">افتاده ❌</span>
+          </div>
+        </div>
+      `;
+
+      if (withdrawnUnits > 0 || retakeUnits > 0) {
+        summaryHtml += `
+          <div style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.35); padding: 7px 10px; border-radius: 6px; margin-top: 6px; font-size: 0.74rem; color: #e9d5ff;">
+            🧪 <strong>شبیه‌ساز فعال:</strong> ${withdrawnUnits > 0 ? `${withdrawnUnits} واحد حذف اضطراری (W) از مخرج معدل کنار گذاشته شد.` : ''} ${retakeUnits > 0 ? `${retakeUnits} واحد به عنوان جبران نمره لحاظ شد.` : ''}
+          </div>
+        `;
+      }
+
+      if (ungradedUnits > 0) {
+        const neededAvg = ((targetGpa * (totalGradedUnits + ungradedUnits)) - totalGradedPoints) / ungradedUnits;
+        summaryHtml += `
+          <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); padding: 7px 10px; border-radius: 6px; margin-top: 6px; font-size: 0.74rem; color: #e2e8f0;">
+            🎯 برای رسیدن به هدف <strong>${targetGpa}</strong>، در <strong>${ungradedUnits} واحد</strong> بدون نمره به میانگین <strong style="color:var(--warning)" dir="ltr">${neededAvg.toFixed(2)}</strong> نیاز دارید.
+          </div>
+        `;
+      }
+
+      document.getElementById('gpaSummaryContent').innerHTML = summaryHtml;
+      updateHomeDashboardStats();
+
+      if (!silent) {
+        failedCourses.forEach((cName, idx) => {
+          setTimeout(() => showToast(`${cName}: ${sarcasticJokes[idx % sarcasticJokes.length]}`), idx * 900);
+        });
+      }
+    }
+
+    function exportGpaPDF() {
+      const element = document.getElementById('gpaExportArea');
+      html2pdf().set({
+        margin: 8, filename: 'IUT_Academic_Report.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#060b16' },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).from(element).save();
+    }
+
+    /* ------------------------------------------------------------- */
+    /* انتخاب واحد + کد بهستان + خروجی تقویم (.ics) */
+    /* ------------------------------------------------------------- */
+    const dayNames = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه'];
+    const timeOptions = [
+      { val: 7.5, label: '07:30' }, { val: 8, label: '08:00' }, { val: 8.5, label: '08:30' },
+      { val: 9, label: '09:00' }, { val: 9.5, label: '09:30' }, { val: 10, label: '10:00' },
+      { val: 10.5, label: '10:30' }, { val: 11, label: '11:00' }, { val: 11.5, label: '11:30' },
+      { val: 12, label: '12:00' }, { val: 12.5, label: '12:30' }, { val: 13, label: '13:00' },
+      { val: 13.5, label: '13:30' }, { val: 14, label: '14:00' }, { val: 14.5, label: '14:30' },
+      { val: 15, label: '15:00' }, { val: 15.5, label: '15:30' }, { val: 16, label: '16:00' },
+      { val: 16.5, label: '16:30' }, { val: 17, label: '17:00' }, { val: 17.5, label: '17:30' },
+      { val: 18, label: '18:00' }, { val: 18.5, label: '18:30' }, { val: 19, label: '19:00' },
+      { val: 19.5, label: '19:30' }, { val: 20, label: '20:00' }, { val: 20.5, label: '20:30' },
+      { val: 21, label: '21:00' }, { val: 21.5, label: '21:30' }
+    ];
+
+    const defaultColors = [
+      'linear-gradient(135deg, #0284c7, #0369a1)', 'linear-gradient(135deg, #7c3aed, #6d28d9)',
+      'linear-gradient(135deg, #059669, #047857)', 'linear-gradient(135deg, #d97706, #b45309)',
+      'linear-gradient(135deg, #db2777, #be185d)', 'linear-gradient(135deg, #4f46e5, #4338ca)'
+    ];
+
+    let rawPlans = JSON.parse(localStorage.getItem('iut_schedule_plans_v3'));
+    if (!rawPlans || rawPlans.length === 0) {
+      let oldCourses = JSON.parse(localStorage.getItem('courses_data_iut_v2') || '[]');
+      rawPlans = [{ id: 'plan_' + Date.now(), name: 'برنامه اصلی', courses: oldCourses }];
+    }
+    let schedulePlans = rawPlans;
+    let activePlanId = localStorage.getItem('iut_active_plan_id') || schedulePlans[0].id;
+
+    function getActivePlan() {
+      let p = schedulePlans.find(p => p.id === activePlanId);
+      if (!p) { p = schedulePlans[0]; activePlanId = p.id; }
+      return p;
+    }
+
+    let editingCourseId = null;
+    const BASE_HOUR = 7.5;
+    const HOUR_WIDTH = 80;
+    let currentFormSessions = [];
+
+    function renderSessionsBuilder() {
+      const container = document.getElementById('sessionsBuilderList');
+      if (!container) return;
+      if (currentFormSessions.length === 0) currentFormSessions = [{ day: 0, start: 10, end: 12 }];
+      let html = '';
+      currentFormSessions.forEach((s, idx) => {
+        const startOpt = timeOptions.find(t => t.val === s.start) || { label: formatTime(s.start) };
+        const endOpt = timeOptions.find(t => t.val === s.end) || { label: formatTime(s.end) };
+
+        let startMenuHtml = timeOptions.filter(t => t.val <= 20.5).map(t => `<div class="custom-option ${t.val === s.start ? 'selected' : ''}" onclick="selectSessionTime(${idx}, 'start', ${t.val})">${t.label}</div>`).join('');
+        let endMenuHtml = timeOptions.filter(t => t.val >= 8).map(t => `<div class="custom-option ${t.val === s.end ? 'selected' : ''}" onclick="selectSessionTime(${idx}, 'end', ${t.val})">${t.label}</div>`).join('');
+        let dayMenuHtml = dayNames.map((dName, dIdx) => `<div class="custom-option ${dIdx === s.day ? 'selected' : ''}" onclick="selectSessionDay(${idx}, ${dIdx})">${dName}</div>`).join('');
+
+        html += `
+          <div class="session-builder-row">
+            <span style="font-size: 0.74rem; color: var(--accent); font-weight: 800;">جلسه ${idx + 1}:</span>
+            <div class="custom-select-box" id="dayBox_${idx}" style="min-width: 90px;">
+              <div class="custom-select-trigger" onclick="toggleDropdown('dayBox_${idx}')"><span>${dayNames[s.day]}</span><span class="arrow">▼</span></div>
+              <div class="custom-options-menu">${dayMenuHtml}</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 0.7rem; color: var(--text-muted);">از</span>
+              <div class="custom-select-box" id="startBox_${idx}" style="min-width: 78px;">
+                <div class="custom-select-trigger" onclick="toggleDropdown('startBox_${idx}')"><span dir="ltr">${startOpt.label}</span><span class="arrow">▼</span></div>
+                <div class="custom-options-menu" dir="ltr">${startMenuHtml}</div>
+              </div>
+              <span style="font-size: 0.7rem; color: var(--text-muted);">تا</span>
+              <div class="custom-select-box" id="endBox_${idx}" style="min-width: 78px;">
+                <div class="custom-select-trigger" onclick="toggleDropdown('endBox_${idx}')"><span dir="ltr">${endOpt.label}</span><span class="arrow">▼</span></div>
+                <div class="custom-options-menu" dir="ltr">${endMenuHtml}</div>
+              </div>
+            </div>
+            ${currentFormSessions.length > 1 ? `<button type="button" class="btn-icon btn-delete" style="margin-right: auto;" onclick="removeSessionRow(${idx})">✕</button>` : ''}
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function selectSessionDay(idx, dayVal) { currentFormSessions[idx].day = dayVal; renderSessionsBuilder(); }
+    function selectSessionTime(idx, type, val) { currentFormSessions[idx][type] = val; renderSessionsBuilder(); }
+    function addSessionRow() {
+      let last = currentFormSessions[currentFormSessions.length - 1];
+      currentFormSessions.push({ day: last ? (last.day + 2) % 6 : 0, start: last ? last.start : 10, end: last ? last.end : 12 });
+      renderSessionsBuilder();
+    }
+    function removeSessionRow(idx) { if (currentFormSessions.length > 1) { currentFormSessions.splice(idx, 1); renderSessionsBuilder(); } }
+
+    function renderPlanTabs() {
+      const container = document.getElementById('plansManagerBar');
+      if (!container) return;
+      container.innerHTML = schedulePlans.map(p => `
+        <div class="plan-tab ${p.id === activePlanId ? 'active' : ''}" onclick="switchPlan('${p.id}')">
+          <span>${p.name}</span>
+          ${schedulePlans.length > 1 ? `<span class="plan-tab-close" onclick="event.stopPropagation(); deletePlan('${p.id}')">✕</span>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function switchPlan(id) { activePlanId = id; localStorage.setItem('iut_active_plan_id', activePlanId); cancelEditMode(); renderPlanTabs(); renderSchedule(); }
+    function createNewPlan() {
+      const pName = prompt('نام برنامه جدید:', `پلن جایگزین ${schedulePlans.length + 1}`);
+      if (!pName || !pName.trim()) return;
+      const newPlan = { id: 'plan_' + Date.now(), name: pName.trim(), courses: [] };
+      schedulePlans.push(newPlan); savePlansToStorage(); switchPlan(newPlan.id);
+    }
+    function duplicatePlan() {
+      const current = getActivePlan();
+      const pName = prompt('نام پلن کپی‌شده:', current.name + ' (کپی)');
+      if (!pName || !pName.trim()) return;
+      const newPlan = { id: 'plan_' + Date.now(), name: pName.trim(), courses: JSON.parse(JSON.stringify(current.courses)) };
+      schedulePlans.push(newPlan); savePlansToStorage(); switchPlan(newPlan.id);
+    }
+    function renameCurrentPlan() {
+      const current = getActivePlan();
+      const newName = prompt('نام جدید برنامه:', current.name);
+      if (!newName || !newName.trim()) return;
+      current.name = newName.trim(); savePlansToStorage(); renderPlanTabs(); renderSchedule();
+    }
+    function deletePlan(id) {
+      if (schedulePlans.length <= 1 || !confirm('آیا از حذف این پلن اطمینان دارید؟')) return;
+      schedulePlans = schedulePlans.filter(p => p.id !== id);
+      if (activePlanId === id) activePlanId = schedulePlans[0].id;
+      savePlansToStorage(); renderPlanTabs(); renderSchedule();
+    }
+    function savePlansToStorage() {
+      localStorage.setItem('iut_schedule_plans_v3', JSON.stringify(schedulePlans));
+      localStorage.setItem('iut_active_plan_id', activePlanId);
+      updateHomeDashboardStats();
+    }
+
+    function changeUnits(delta) {
+      let val = Math.min(Math.max(parseInt(document.getElementById('cUnits').value) + delta, 1), 6);
+      document.getElementById('cUnits').value = val;
+      document.getElementById('cUnitsVal').innerText = val;
+    }
+
+    function toggleDropdown(boxId) {
+      const targetBox = document.getElementById(boxId);
+      if (!targetBox) return;
+      const isOpen = targetBox.classList.contains('open');
+      document.querySelectorAll('.custom-select-box').forEach(b => b.classList.remove('open'));
+      if (!isOpen) targetBox.classList.add('open');
+    }
+
+    function selectColor(val, label, bg, el) {
+      document.getElementById('cColorTheme').value = val;
+      document.getElementById('colorValText').innerHTML = `<span class="color-bullet" style="background: ${bg};"></span><span>${label}</span>`;
+      el.parentElement.querySelectorAll('.custom-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      el.closest('.custom-select-box').classList.remove('open');
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.custom-select-box')) document.querySelectorAll('.custom-select-box').forEach(b => b.classList.remove('open'));
+    });
+
+    function toggleDrawer() {
+      document.getElementById('advancedDrawer').classList.toggle('open');
+      document.getElementById('toggleDrawerBtn').classList.toggle('open');
+    }
+
+    function handleFormSubmit() {
+      const name = document.getElementById('cName').value.trim();
+      const code = document.getElementById('cCode').value.trim();
+      const instructor = document.getElementById('cInstructor').value.trim();
+      const examDate = document.getElementById('cExamDate').value.trim();
+      const units = parseInt(document.getElementById('cUnits').value) || 0;
+      const colorTheme = document.getElementById('cColorTheme').value;
+
+      if (!name) return showToast('لطفاً نام درس را وارد کنید.');
+      for (const s of currentFormSessions) {
+        if (s.start >= s.end) return showToast(`ساعت شروع باید پیش از پایان باشد (${dayNames[s.day]}).`);
+      }
+
+      const activeCourses = getActivePlan().courses;
+      for (const session of currentFormSessions) {
+        for (const c of activeCourses) {
+          if (editingCourseId && c.id === editingCourseId) continue;
+          for (const ex of c.sessions) {
+            if (ex.day === session.day && session.start < ex.end && session.end > ex.start) {
+              return showToast(`⚠️ تداخل زمانی در روز ${dayNames[session.day]} با درس "${c.name}"`);
+            }
+          }
+        }
+      }
+
+      const assignedColor = colorTheme === 'auto' ? defaultColors[activeCourses.length % defaultColors.length] : colorTheme;
+      const newSessions = currentFormSessions.map((s, idx) => ({ sessionId: 's_' + Date.now() + '_' + idx, day: s.day, start: s.start, end: s.end }));
+
+      if (editingCourseId) {
+        const idx = activeCourses.findIndex(c => c.id === editingCourseId);
+        if (idx !== -1) activeCourses[idx] = { ...activeCourses[idx], name, code, instructor, examDate, units, color: colorTheme === 'auto' ? activeCourses[idx].color : assignedColor, sessions: newSessions };
+        cancelEditMode();
+      } else {
+        activeCourses.push({ id: 'c_' + Date.now(), name, code, instructor, examDate, units, color: assignedColor, sessions: newSessions });
+        resetForm();
+      }
+      saveAndRender();
+    }
+
+    function copyBehestanCode(code, courseName) {
+      navigator.clipboard.writeText(code).then(() => {
+        showToast(`کد "${code}" (${courseName}) کپی شد! آماده Paste در بهستان ⚡`);
+      });
+    }
+
+    function copyAllBehestanCodes() {
+      const courses = getActivePlan().courses.filter(c => c.code && c.code.trim() !== '');
+      if (courses.length === 0) return showToast('هیچ کد بهستانی برای دروس این پلن ثبت نشده است.');
+      const text = courses.map(c => `${c.name}: ${c.code}`).join('\n');
+      navigator.clipboard.writeText(text).then(() => showToast(`لیست ${courses.length} کد درس بهستان کپی شد! 📋`));
+    }
+
+    /* تولید و دانلود فایل استاندارد تقویم گوشی (.ics) با یادآور ۱۵ دقیقه قبل */
+    function exportScheduleICS() {
+      const plan = getActivePlan();
+      if (plan.courses.length === 0) return showToast('ابتدا حداقل یک درس در جدول ثبت کنید.');
+
+      const rruleDays = ['SA', 'SU', 'MO', 'TU', 'WE', 'TH'];
+      const jsDayMap = [6, 0, 1, 2, 3, 4]; // شنبه=6، یکشنبه=0 ...
+      const now = new Date();
+
+      let icsLines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//IUT Student Suite//FA',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH'
+      ];
+
+      plan.courses.forEach(c => {
+        c.sessions.forEach(s => {
+          const targetJsDay = jsDayMap[s.day];
+          const firstDate = new Date(now);
+          const diff = (targetJsDay - now.getDay() + 7) % 7;
+          firstDate.setDate(now.getDate() + diff);
+
+          const startH = Math.floor(s.start);
+          const startM = (s.start % 1 === 0.5) ? 30 : 0;
+          const endH = Math.floor(s.end);
+          const endM = (s.end % 1 === 0.5) ? 30 : 0;
+
+          const pad = n => String(n).padStart(2, '0');
+          const dStr = `${firstDate.getFullYear()}${pad(firstDate.getMonth()+1)}${pad(firstDate.getDate())}`;
+          const dtStart = `${dStr}T${pad(startH)}${pad(startM)}00`;
+          const dtEnd = `${dStr}T${pad(endH)}${pad(endM)}00`;
+
+          icsLines.push(
+            'BEGIN:VEVENT',
+            `UID:${s.sessionId}@iut.ac.ir`,
+            `SUMMARY:${c.name}${c.code ? ' [' + c.code + ']' : ''}`,
+            `DESCRIPTION:${c.instructor ? 'استاد/مکان: ' + c.instructor + ' | ' : ''}واحد: ${c.units}`,
+            `DTSTART:${dtStart}`,
+            `DTEND:${dtEnd}`,
+            `RRULE:FREQ=WEEKLY;BYDAY=${rruleDays[s.day]};COUNT=18`,
+            'BEGIN:VALARM',
+            'TRIGGER:-PT15M',
+            'ACTION:DISPLAY',
+            `DESCRIPTION:یادآوری کلاس ${c.name} (۱۵ دقیقه دیگر)`,
+            'END:VALARM',
+            'END:VEVENT'
+          );
+        });
+      });
+
+      icsLines.push('END:VCALENDAR');
+      const blob = new Blob([icsLines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `IUT_Schedule_${plan.name.replace(/\s+/g, '_')}.ics`;
+      a.click();
+      showToast('فایل تقویم (.ics) دانلود شد! روی گوشی یا Google Calendar باز کنید 📅');
+    }
+
+    function startEditCourse(id) {
+      const c = getActivePlan().courses.find(item => item.id === id);
+      if (!c) return;
+      editingCourseId = id;
+      document.getElementById('cName').value = c.name;
+      document.getElementById('cCode').value = c.code || '';
+      document.getElementById('cInstructor').value = c.instructor || '';
+      document.getElementById('cExamDate').value = c.examDate || '';
+      document.getElementById('cUnits').value = c.units;
+      document.getElementById('cUnitsVal').innerText = c.units;
+      currentFormSessions = JSON.parse(JSON.stringify(c.sessions));
+      renderSessionsBuilder();
+      const btnSubmit = document.getElementById('btnSubmitCourse');
+      btnSubmit.innerText = '💾 ذخیره تغییرات';
+      btnSubmit.className = 'btn-sch btn-sch-warning';
+      document.getElementById('btnCancelEdit').style.display = 'inline-flex';
+    }
+
+    function cancelEditMode() {
+      editingCourseId = null; resetForm();
+      const btnSubmit = document.getElementById('btnSubmitCourse');
+      btnSubmit.innerText = '+ ثبت در جدول';
+      btnSubmit.className = 'btn-sch btn-sch-primary';
+      document.getElementById('btnCancelEdit').style.display = 'none';
+    }
+
+    function resetForm() {
+      document.getElementById('cName').value = '';
+      document.getElementById('cCode').value = '';
+      document.getElementById('cInstructor').value = '';
+      document.getElementById('cExamDate').value = '';
+      currentFormSessions = [{ day: 0, start: 10, end: 12 }];
+      renderSessionsBuilder();
+    }
+
+    function deleteCourse(id) {
+      const plan = getActivePlan();
+      plan.courses = plan.courses.filter(c => c.id !== id);
+      if (editingCourseId === id) cancelEditMode();
+      saveAndRender();
+    }
+
+    function saveAndRender() { savePlansToStorage(); renderSchedule(); }
+    function formatTime(val) { const h = Math.floor(val); const m = (val % 1 === 0.5) ? '30' : '00'; return `${h < 10 ? '0' + h : h}:${m}`; }
+
+    function renderSchedule() {
+      const plan = getActivePlan();
+      document.getElementById('capturePlanName').innerText = plan.name;
+      for (let i = 0; i < 6; i++) { const r = document.getElementById(`row-${i}`); if (r) r.innerHTML = ''; }
+      const listContainer = document.getElementById('coursesList');
+      if (listContainer) listContainer.innerHTML = '';
+
+      let totalUnits = 0;
+      plan.courses.forEach(c => {
+        totalUnits += c.units;
+        c.sessions.forEach(session => {
+          const right = (session.start - BASE_HOUR) * HOUR_WIDTH;
+          const width = (session.end - session.start) * HOUR_WIDTH;
+          const row = document.getElementById(`row-${session.day}`);
+          if (!row) return;
+
+          const card = document.createElement('div');
+          card.className = 'event-card';
+          card.style.right = `${right + 2}px`;
+          card.style.width = `${width - 4}px`;
+          card.style.background = c.color;
+          card.setAttribute('data-id', c.id);
+          card.setAttribute('data-session-id', session.sessionId);
+          card.innerHTML = `
+            <div>
+              <div class="event-title">${c.name}</div>
+              ${c.code ? `<div class="event-instructor" dir="ltr">${c.code}</div>` : (c.instructor ? `<div class="event-instructor">${c.instructor}</div>` : '')}
+            </div>
+            <div class="event-footer">
+              <span class="event-time-span">${formatTime(session.start)}-${formatTime(session.end)}</span>
+              <span>${c.units}U</span>
+            </div>
+          `;
+          card.addEventListener('mousedown', initDrag);
+          card.addEventListener('dblclick', () => startEditCourse(c.id));
+          row.appendChild(card);
+        });
+
+        if (listContainer) {
+          const item = document.createElement('div');
+          item.className = 'course-item';
+          const scheduleDetails = c.sessions.map(s => `${dayNames[s.day]} (${formatTime(s.start)}-${formatTime(s.end)})`).join(' ، ');
+          item.innerHTML = `
+            <div class="course-item-info">
+              <strong>${c.name} (${c.units} واحد)</strong>
+              <span>${scheduleDetails}</span>
+              ${c.code ? `<div class="code-copy-pill" onclick="copyBehestanCode('${c.code}', '${c.name}')" title="کپی فوری کد برای بهستان">📋 ${c.code} (کپی کد)</div>` : ''}
+              ${c.examDate ? `<span style="color:var(--warning); margin-top:2px;">📝 امتحان: ${c.examDate}</span>` : ''}
+            </div>
+            <div class="course-item-actions">
+              <button class="btn-icon btn-edit" onclick="startEditCourse('${c.id}')">✏️</button>
+              <button class="btn-icon btn-delete" onclick="deleteCourse('${c.id}')">✕</button>
+            </div>
+          `;
+          listContainer.appendChild(item);
+        }
+      });
+
+      document.getElementById('unitsBadge').innerText = `${totalUnits} Units`;
+      document.getElementById('courseCountBadge').innerText = `${plan.courses.length} درس`;
+      document.getElementById('captureUnitsTotal').innerText = `${totalUnits} واحد`;
+      updateHomeDashboardStats();
+    }
+
+    let activeDrag = null;
+    function initDrag(e) {
+      if (e.button !== 0) return;
+      const card = e.currentTarget;
+      const course = getActivePlan().courses.find(c => c.id === card.getAttribute('data-id'));
+      if (!course) return;
+      const session = course.sessions.find(s => s.sessionId === card.getAttribute('data-session-id'));
+      if (!session) return;
+      activeDrag = { card, session, startX: e.clientX, startY: e.clientY, originalRight: (session.start - BASE_HOUR) * HOUR_WIDTH, duration: session.end - session.start, moved: false };
+      document.addEventListener('mousemove', onDragging);
+      document.addEventListener('mouseup', onDragEnd);
+    }
+    function onDragging(e) {
+      if (!activeDrag) return;
+      const deltaX = activeDrag.startX - e.clientX;
+      if (Math.abs(deltaX) > 3 || Math.abs(activeDrag.startY - e.clientY) > 3) activeDrag.moved = true;
+      if (!activeDrag.moved) return;
+      let currentRight = Math.max(0, Math.min(activeDrag.originalRight + deltaX, (14 - activeDrag.duration) * HOUR_WIDTH));
+      activeDrag.card.style.right = `${currentRight + 2}px`;
+    }
+    function onDragEnd(e) {
+      if (!activeDrag) return;
+      document.removeEventListener('mousemove', onDragging);
+      document.removeEventListener('mouseup', onDragEnd);
+      if (!activeDrag.moved) { activeDrag = null; return; }
+      const { card, session, duration } = activeDrag;
+      let newStart = Math.round((BASE_HOUR + ((parseFloat(card.style.right) - 2) / HOUR_WIDTH)) * 2) / 2;
+      newStart = Math.max(7.5, Math.min(newStart, 21.5 - duration));
+      let newEnd = newStart + duration;
+      let targetDay = session.day;
+      for (let d = 0; d < 6; d++) {
+        const rect = document.getElementById(`row-${d}`).getBoundingClientRect();
+        if (e.clientY >= rect.top && e.clientY <= rect.bottom) { targetDay = d; break; }
+      }
+      let conflict = false;
+      for (const c of getActivePlan().courses) {
+        for (const s of c.sessions) {
+          if (s.sessionId !== session.sessionId && s.day === targetDay && newStart < s.end && newEnd > s.start) conflict = true;
+        }
+      }
+      if (conflict) showToast(`⚠️ تداخل زمانی در روز ${dayNames[targetDay]}!`);
+      else { session.day = targetDay; session.start = newStart; session.end = newEnd; saveAndRender(); }
+      renderSchedule();
+      activeDrag = null;
+    }
+
+    function exportSchedule() {
+      const area = document.getElementById('captureArea');
+      html2canvas(area, { backgroundColor: '#060b16', scale: 2 }).then(canvas => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = `iut_schedule_${getActivePlan().name}.png`;
+        link.click();
+      });
+    }
+
+    async function exportAllPlans() {
+      const orig = activePlanId;
+      for (const p of schedulePlans) {
+        switchPlan(p.id);
+        await new Promise(r => setTimeout(r, 200));
+        const canvas = await html2canvas(document.getElementById('captureArea'), { backgroundColor: '#060b16', scale: 2 });
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = `iut_schedule_${p.name}.png`;
+        link.click();
+        await new Promise(r => setTimeout(r, 350));
+      }
+      switchPlan(orig);
+    }
+
+    /* ------------------------------------------------------------- */
+    /* ماژول ۴: چارت درسی تعاملی و پیشرفت فارغ‌التحصیلی */
+    /* ------------------------------------------------------------- */
+    let degreeConfig = JSON.parse(localStorage.getItem('iut_degree_chart_v1') || '{"totalTarget":140,"courses":[]}');
+    const categoryCaps = { 'عمومی': 22, 'پایه': 24, 'اصلی': 48, 'تخصصی': 34, 'آزمایشگاه': 12 };
+
+    function saveDegreeConfig() {
+      degreeConfig.totalTarget = parseInt(document.getElementById('degTotalTarget').value) || 140;
+      localStorage.setItem('iut_degree_chart_v1', JSON.stringify(degreeConfig));
+      renderDegreeChart();
+      updateHomeDashboardStats();
+    }
+
+    function computePassedUnitsByCategory() {
+      const passedByCat = { 'عمومی': 0, 'پایه': 0, 'اصلی': 0, 'تخصصی': 0, 'آزمایشگاه': 0 };
+      const seenNames = new Set();
+
+      gpaState.terms.forEach(t => {
+        t.courses.forEach(c => {
+          if (!c.withdrawn && c.grade !== '' && parseFloat(c.grade) >= 10) {
+            const cat = c.category || 'اصلی';
+            const u = parseInt(c.units) || 0;
+            passedByCat[cat] = (passedByCat[cat] || 0) + u;
+            if (c.name.trim()) seenNames.add(c.name.trim());
+          }
+        });
+      });
+
+      degreeConfig.courses.forEach(c => {
+        if (c.status === 'passed' && !seenNames.has(c.name.trim())) {
+          passedByCat[c.cat] = (passedByCat[c.cat] || 0) + (parseInt(c.units) || 0);
+        }
+      });
+      return passedByCat;
+    }
+
+    function renderDegreeChart() {
+      document.getElementById('degTotalTarget').value = degreeConfig.totalTarget || 140;
+      const byCat = computePassedUnitsByCategory();
+      const totalPassed = Object.values(byCat).reduce((a, b) => a + b, 0);
+      const totalTarget = degreeConfig.totalTarget || 140;
+      const pct = Math.min(100, Math.round((totalPassed / totalTarget) * 100));
+
+      document.getElementById('degOverallPct').innerText = `${pct}%`;
+      document.getElementById('degOverallBar').style.width = `${pct}%`;
+      document.getElementById('degSummarySub').innerText = `${totalPassed} واحد پاس‌شده از ${totalTarget} واحد (${Math.max(0, totalTarget - totalPassed)} واحد باقی‌مانده)`;
+
+      const catGrid = document.getElementById('degreeCategoriesGrid');
+      catGrid.innerHTML = Object.keys(categoryCaps).map(cat => {
+        const passed = byCat[cat] || 0;
+        const cap = categoryCaps[cat];
+        const cPct = Math.min(100, Math.round((passed / cap) * 100));
+        return `
+          <div class="cat-box">
+            <div style="display:flex; justify-content:space-between; font-size:0.82rem; font-weight:700;">
+              <span>دروس ${cat}</span>
+              <span style="color:var(--accent);" dir="ltr">${passed} / ${cap} U</span>
+            </div>
+            <div class="gpa-progress-track"><div class="gpa-progress-bar" style="width:${cPct}%;"></div></div>
+          </div>
+        `;
+      }).join('');
+
+      const listEl = document.getElementById('chartCoursesList');
+      if (degreeConfig.courses.length === 0) {
+        listEl.innerHTML = `<div style="font-size:0.78rem; color:var(--text-muted); text-align:center; padding:12px;">واحدهای پاس‌شده جدول معدل به صورت خودکار لحاظ شده‌اند. برای ثبت پیش‌نیازها یا دروس آتی از فرم بالا استفاده کنید.</div>`;
+      } else {
+        listEl.innerHTML = degreeConfig.courses.map((c, idx) => `
+          <div class="course-item">
+            <div class="course-item-info">
+              <strong>${c.name} (${c.units} واحد - ${c.cat})</strong>
+              <span>پیش‌نیاز: ${c.prereq || 'ندارد'} | وضعیت: ${c.status === 'passed' ? 'پاس‌شده ✅' : (c.status === 'current' ? 'در حال اخذ 🔄' : 'باقی‌مانده ⏳')}</span>
+            </div>
+            <button class="btn-icon btn-delete" onclick="deleteChartCourse(${idx})">✕</button>
+          </div>
+        `).join('');
+      }
+    }
+
+    function addChartCourse() {
+      const name = document.getElementById('chCourseName').value.trim();
+      const units = parseInt(document.getElementById('chCourseUnits').value) || 3;
+      const cat = document.getElementById('chCourseCat').value;
+      const prereq = document.getElementById('chCoursePrereq').value.trim();
+      const status = document.getElementById('chCourseStatus').value;
+      if (!name) return showToast('نام درس را وارد کنید.');
+      degreeConfig.courses.push({ name, units, cat, prereq, status });
+      document.getElementById('chCourseName').value = '';
+      document.getElementById('chCoursePrereq').value = '';
+      saveDegreeConfig();
+    }
+    function deleteChartCourse(idx) { degreeConfig.courses.splice(idx, 1); saveDegreeConfig(); }
+
+    /* ------------------------------------------------------------- */
+    /* ماژول ۵: ردیاب تمرین‌ها، کوئیزها و تحویل گزارش‌کار */
+    /* ------------------------------------------------------------- */
+    let deadlinesList = JSON.parse(localStorage.getItem('iut_deadlines_v1') || '[]');
+
+    function renderDeadlines() {
+      const container = document.getElementById('deadlinesContainer');
+      if (!container) return;
+      deadlinesList.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      if (deadlinesList.length === 0) {
+        container.innerHTML = `<div class="card" style="text-align:center; color:var(--text-muted); font-size:0.82rem;">هیچ ددلاین یا تحویل گزارش‌کاری ثبت نشده است.</div>`;
+        updateHomeDashboardStats();
+        return;
+      }
+
+      const today = new Date(); today.setHours(0,0,0,0);
+      container.innerHTML = deadlinesList.map((d, idx) => {
+        const target = new Date(d.date); target.setHours(0,0,0,0);
+        const diffDays = Math.round((target - today) / (1000 * 60 * 60 * 24));
+        let badgeText = '', badgeBg = '', badgeColor = '';
+        if (diffDays < 0) { badgeText = `${Math.abs(diffDays)} روز گذشته`; badgeBg = 'rgba(148,163,184,0.15)'; badgeColor = '#94a3b8'; }
+        else if (diffDays === 0) { badgeText = '🔥 تحویل امروز!'; badgeBg = 'rgba(244,63,94,0.2)'; badgeColor = '#f43f5e'; }
+        else if (diffDays <= 2) { badgeText = `⚡ ${diffDays} روز مانده`; badgeBg = 'rgba(251,191,36,0.2)'; badgeColor = '#fbbf24'; }
+        else { badgeText = `⏳ ${diffDays} روز مانده`; badgeBg = 'rgba(56,189,248,0.15)'; badgeColor = '#38bdf8'; }
+
+        return `
+          <div class="deadline-card">
+            <div>
+              <strong style="font-size:0.88rem; color:#fff;">[${d.type}] ${d.title}</strong>
+              <span style="display:block; font-size:0.75rem; color:var(--text-muted); margin-top:3px;">درس: ${d.course || 'عمومی'} | موعد: ${d.date}</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="countdown-badge" style="background:${badgeBg}; color:${badgeColor}; border:1px solid ${badgeColor};">${badgeText}</span>
+              <button class="btn-icon btn-delete" onclick="deleteDeadlineItem(${idx})">✕</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      updateHomeDashboardStats();
+    }
+
+    function addDeadlineItem() {
+      const title = document.getElementById('dlTitle').value.trim();
+      const course = document.getElementById('dlCourse').value.trim();
+      const type = document.getElementById('dlType').value;
+      const date = document.getElementById('dlDate').value;
+      if (!title || !date) return showToast('عنوان و تاریخ تحویل را مشخص کنید.');
+      deadlinesList.push({ title, course, type, date });
+      document.getElementById('dlTitle').value = '';
+      localStorage.setItem('iut_deadlines_v1', JSON.stringify(deadlinesList));
+      renderDeadlines();
+      showToast('ددلاین جدید با شمارشگر معکوس ثبت شد ⏳');
+    }
+    function deleteDeadlineItem(idx) {
+      deadlinesList.splice(idx, 1);
+      localStorage.setItem('iut_deadlines_v1', JSON.stringify(deadlinesList));
+      renderDeadlines();
+    }
+
+    /* ------------------------------------------------------------- */
+    /* ماژول ۶: دفترچه اساتید و قالب آماده ایمیل رسمی */
+    /* ------------------------------------------------------------- */
+    let professorsData = JSON.parse(localStorage.getItem('iut_professors_v1') || '[]');
+
+    function renderProfessors() {
+      const list = document.getElementById('professorsList');
+      if (!list) return;
+      if (professorsData.length === 0) {
+        list.innerHTML = `<div style="font-size:0.78rem; color:var(--text-muted); text-align:center; padding:12px;">هنوز اطلاعات استادی ذخیره نشده است.</div>`;
+        return;
+      }
+      list.innerHTML = professorsData.map((p, idx) => `
+        <div class="course-item">
+          <div class="course-item-info">
+            <strong>👨‍🏫 ${p.name}</strong>
+            <span>📍 اتاق: ${p.room || '-'} | 🕒 حضور: ${p.hours || '-'}</span>
+            ${p.email ? `<div class="code-copy-pill" onclick="navigator.clipboard.writeText('${p.email}'); showToast('ایمیل استاد کپی شد!')">📧 ${p.email}</div>` : ''}
+          </div>
+          <button class="btn-icon btn-delete" onclick="deleteProfessor(${idx})">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function addProfessor() {
+      const name = document.getElementById('profName').value.trim();
+      const email = document.getElementById('profEmail').value.trim();
+      const room = document.getElementById('profRoom').value.trim();
+      const hours = document.getElementById('profHours').value.trim();
+      if (!name) return showToast('نام استاد را وارد کنید.');
+      professorsData.push({ name, email, room, hours });
+      document.getElementById('profName').value = '';
+      document.getElementById('profEmail').value = '';
+      document.getElementById('profRoom').value = '';
+      document.getElementById('profHours').value = '';
+      localStorage.setItem('iut_professors_v1', JSON.stringify(professorsData));
+      renderProfessors();
+    }
+    function deleteProfessor(idx) {
+      professorsData.splice(idx, 1);
+      localStorage.setItem('iut_professors_v1', JSON.stringify(professorsData));
+      renderProfessors();
+    }
+
+    function generateOfficialEmail() {
+      const type = document.getElementById('emailTplType').value;
+      const prof = document.getElementById('emailProfName').value.trim() || '[نام استاد]';
+      const course = document.getElementById('emailCourseName').value.trim() || '[نام درس]';
+      const student = document.getElementById('emailStudentInfo').value.trim() || '[نام و شماره دانشجویی]';
+      let body = '';
+
+      if (type === 'deadline') {
+        body = `موضوع: درخواست تمدید مهلت تحویل تمرین/گزارش‌کار درس ${course}\n\nاستاد گرامی جناب آقای / سرکار خانم ${prof}\nبا سلام و احترام،\n\nاینجانب ${student} دانشجوی درس «${course}»، به استحضار می‌رساند بخش عمده‌ای از تکلیف/گزارش‌کار مربوطه را تکمیل نموده‌ام؛ اما به دلیل فشردگی امتحانات و تکالیف این هفته، در صورت صلاحدید و امکان، تقاضا دارم مهلت تحویل آن را به مدت ۴۸ ساعت تمدید فرمایید تا بتوانم فایل نهایی را با کیفیت کامل خدمتتان ارسال نمایم.\n\nپیشاپیش از لطف، همراهی و وقت ارزشمندتان کمال تشکر را دارم.\n\nبا احترام فراوان،\n${student}`;
+      } else if (type === 'grade') {
+        body = `موضوع: درخواست بازبینی نمره درس ${course}\n\nاستاد ارجمند جناب آقای / سرکار خانم ${prof}\nبا سلام و ادب،\n\nضمن تشکر از زحمات جنابعالی در طول نیم‌سال تحصیلی برای درس «${course}»، اینجانب ${student} پس از مشاهده نمره ثبت‌شده، با توجه به نحوه پاسخگویی در جلسه آزمون و فعالیت‌های طول ترم، گمان می‌کنم احتمال خطای سهوی در ثبت یا جمع بارم وجود داشته باشد. در صورت امکان، خواهشمندم دستور فرمایید برگه اینجانب مجدداً مورد بازبینی قرار گیرد.\n\nاز بذل توجه و راهنمایی شما بسیار سپاسگزارم.\n\nبا تجدید احترام،\n${student}`;
+      } else if (type === 'meeting') {
+        body = `موضوع: درخواست هماهنگی وقت ملاقات حضوری - درس ${course}\n\nاستاد گرامی جناب آقای / سرکار خانم ${prof}\nبا سلام و احترام،\n\nاینجانب ${student} دانشجوی درس «${course}»، جهت طرح چند پرسش علمی و رفع اشکال در خصوص مباحث اخیر، تقاضای حضور در دفتر جنابعالی را دارم. لطفاً بفرمایید در کدام بازه زمانی از ساعات حضور هفتگی امکان مراجعه حضوری برایم فراهم است.\n\nبا تشکر و احترام،\n${student}`;
+      } else if (type === 'recom') {
+        body = `موضوع: درخواست صدور توصیه‌نامه علمی (Recommendation Letter)\n\nاستاد فرهیخته جناب آقای / سرکار خانم ${prof}\nبا سلام و احترام،\n\nاینجانب ${student} که افتخار گذراندن درس «${course}» را در محضر جنابعالی داشته‌ام، در حال تکمیل مدارک علمی خود هستم. با توجه به شناخت جنابعالی از عملکرد تحصیلی بنده، در صورت صلاحدید تقاضا دارم با صدور توصیه‌نامه علمی اینجانب را یاری فرمایید. در صورت موافقت، خلاصه رزومه و ریزنمرات خود را به پیوست تقدیم خواهم کرد.\n\nبا سپاس بیکران از لطف شما،\n${student}`;
+      } else {
+        body = `موضوع: درخواست مجوز اخذ / هم‌نیازی درس ${course}\n\nاستاد گرامی جناب آقای / سرکار خانم ${prof}\nبا سلام و احترام،\n\nاینجانب ${student} متقاضی اخذ درس «${course}» در نیم‌سال جاری هستم. با توجه به برنامه چارت تحصیلی و شرایط واحدهای باقی‌مانده، در صورت صلاحدید موافقت خود را با اخذ/هم‌نیازی این درس در سامانه بهستان اعلام فرمایید.\n\nبا تشکر و احترام،\n${student}`;
+      }
+      document.getElementById('emailOutputArea').value = body;
+    }
+
+    function copyEmailTemplate() {
+      const val = document.getElementById('emailOutputArea').value;
+      navigator.clipboard.writeText(val).then(() => showToast('متن ایمیل رسمی کپی شد! آماده ارسال ✉️'));
+    }
+
+    /* ------------------------------------------------------------- */
+    /* ماژول ۷: ماشین‌حساب مهندسی، تبدیل واحد و فرمول‌نامه */
+    /* ------------------------------------------------------------- */
+    function sciInsert(token) {
+      const disp = document.getElementById('sciCalcDisplay');
+      disp.value += token;
+      disp.focus();
+    }
+    function sciClear() { document.getElementById('sciCalcDisplay').value = ''; }
+    function sciEvaluate() {
+      const disp = document.getElementById('sciCalcDisplay');
+      try {
+        const res = Function('"use strict";return (' + disp.value + ')')();
+        disp.value = Number.isFinite(res) ? Number(res.toPrecision(10)) : 'Error';
+      } catch (e) { disp.value = 'Error'; }
+    }
+
+    const unitDefinitions = {
+      length: { 'متر (m)': 1, 'سانتی‌متر (cm)': 0.01, 'میلی‌متر (mm)': 1e-3, 'میکرومتر (µm)': 1e-6, 'نانومتر (nm)': 1e-9, 'آنگستروم (Å)': 1e-10 },
+      pressure: { 'پاسکال (Pa)': 1, 'کیلوپاسکال (kPa)': 1e3, 'بار (bar)': 1e5, 'اتمسفر (atm)': 101325, 'میلی‌متر جیوه (mmHg)': 133.322, 'PSI': 6894.76 },
+      energy: { 'ژول (J)': 1, 'کیلوژول (kJ)': 1e3, 'کالری (cal)': 4.184, 'الکترون‌ولت (eV)': 1.60218e-19 },
+      angle: { 'درجه (deg)': 1, 'رادیان (rad)': 180 / Math.PI },
+      temp: { 'سلسیوس (°C)': 'C', 'کلوین (K)': 'K', 'فارنهایت (°F)': 'F' }
+    };
+
+    function populateConverterUnits() {
+      const cat = document.getElementById('convCategory').value;
+      const fromSel = document.getElementById('convFromUnit');
+      const toSel = document.getElementById('convToUnit');
+      if (!fromSel || !toSel) return;
+      const keys = Object.keys(unitDefinitions[cat]);
+      fromSel.innerHTML = keys.map(k => `<option value="${k}">${k}</option>`).join('');
+      toSel.innerHTML = keys.map((k, i) => `<option value="${k}" ${i===1?'selected':''}>${k}</option>`).join('');
+      runUnitConversion();
+    }
+
+    function runUnitConversion() {
+      const cat = document.getElementById('convCategory').value;
+      const fromU = document.getElementById('convFromUnit').value;
+      const toU = document.getElementById('convToUnit').value;
+      const val = parseFloat(document.getElementById('convInputVal').value);
+      const out = document.getElementById('convOutputVal');
+      if (isNaN(val)) { out.value = ''; return; }
+
+      if (cat === 'temp') {
+        let c = val;
+        if (fromU.includes('K')) c = val - 273.15;
+        else if (fromU.includes('F')) c = (val - 32) * 5 / 9;
+        let res = c;
+        if (toU.includes('K')) res = c + 273.15;
+        else if (toU.includes('F')) res = (c * 9 / 5) + 32;
+        out.value = res.toFixed(3);
+      } else {
+        const map = unitDefinitions[cat];
+        const base = val * map[fromU];
+        const res = base / map[toU];
+        out.value = (Math.abs(res) < 1e-4 || Math.abs(res) >= 1e6) ? res.toExponential(4) : Number(res.toPrecision(7));
+      }
+    }
+
+    let cheatSheets = JSON.parse(localStorage.getItem('iut_cheatsheet_v1') || '[{"title":"قانون براگ (بلورشناسی)","formula":"nλ = 2d·sin(θ)   |   1 Å = 0.1 nm"}]');
+    function renderCheatSheet() {
+      const grid = document.getElementById('cheatSheetGrid');
+      if (!grid) return;
+      grid.innerHTML = cheatSheets.map((item, idx) => `
+        <div class="card" style="padding: 13px 15px; display:flex; flex-direction:column; justify-content:space-between; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="font-size:0.82rem; color:var(--accent);">📌 ${item.title}</strong>
+            <button class="btn-icon btn-delete" onclick="deleteCheatSheetItem(${idx})">✕</button>
+          </div>
+          <div style="background:#080c14; padding:8px 10px; border-radius:6px; border:1px solid var(--border-color); font-family:monospace; font-size:0.8rem; color:#fff;" dir="ltr">${item.formula}</div>
+        </div>
+      `).join('');
+    }
+    function addCheatSheetItem() {
+      const title = document.getElementById('csTitle').value.trim();
+      const formula = document.getElementById('csFormula').value.trim();
+      if (!title || !formula) return showToast('عنوان و فرمول را وارد کنید.');
+      cheatSheets.push({ title, formula });
+      document.getElementById('csTitle').value = '';
+      document.getElementById('csFormula').value = '';
+      localStorage.setItem('iut_cheatsheet_v1', JSON.stringify(cheatSheets));
+      renderCheatSheet();
+    }
+    function deleteCheatSheetItem(idx) {
+      cheatSheets.splice(idx, 1);
+      localStorage.setItem('iut_cheatsheet_v1', JSON.stringify(cheatSheets));
+      renderCheatSheet();
+    }
+
+    /* ------------------------------------------------------------- */
+    /* اتاق تمرکز و آرامش ذهن */
+    /* ------------------------------------------------------------- */
+    const zenQuotes = [
+      { text: "دریغ است ایران که ویران شود / کنام پلنگان و شیران شود", author: "فردوسی (شاهنامه)" },
+      { text: "پیروزی نصیب کسانی می‌شود که بیش از دیگران استقامت دارند.", author: "کوروش بزرگ" },
+      { text: "The only way to do great work is to love what you do.\nتنها راه انجام دادن کارهای بزرگ این است که عاشق کاری باشی که انجام می‌دهی.", author: "Steve Jobs" },
+      { text: "It does not matter how slowly you go as long as you do not stop.\nمهم نیست چقدر آهسته حرکت می‌کنی، تا زمانی که متوقف نشوی.", author: "Confucius" },
+      { text: "In the middle of difficulty lies opportunity.\nدر میان سختی‌ها، فرصت‌ها نهفته‌اند.", author: "Albert Einstein" },
+      { text: "Per aspera ad astra.\nاز میان سختی‌ها به سوی ستارگان.", author: "ضرب‌المثل لاتین" }
+    ];
+
+    let breathingInterval = null, breathingSecInterval = null, breathingActive = false;
+    let pomoTimeLeft = 25 * 60, pomoInterval = null, pomoRunning = false, currentPomoMins = 25;
+    let todos = JSON.parse(localStorage.getItem('iut_lounge_todos_v2') || '[]');
+
+    function initLounge() { rotateQuote(); renderTodos(); loadScratchpad(); }
+    function rotateQuote() {
+      const randomQ = zenQuotes[Math.floor(Math.random() * zenQuotes.length)];
+      document.getElementById('zenQuoteText').innerText = `«${randomQ.text}»`;
+      document.getElementById('zenQuoteAuthor').innerText = randomQ.author;
+    }
+    function copyCurrentQuote() {
+      navigator.clipboard.writeText(`${document.getElementById('zenQuoteText').innerText} — ${document.getElementById('zenQuoteAuthor').innerText}`).then(() => showToast('نقل‌قول کپی شد 📋'));
+    }
+
+    function toggleBreathing() {
+      const btn = document.getElementById('btnBreatheToggle');
+      const text = document.getElementById('breatheText');
+      const subTimer = document.getElementById('breatheSubTimer');
+      const circle = document.getElementById('breatheCircle');
+      const glow = document.getElementById('breatheGlow');
+
+      if (breathingActive) {
+        clearInterval(breathingInterval); clearInterval(breathingSecInterval);
+        breathingActive = false; btn.innerText = 'شروع چرخه تنفس ۴ ثانیه‌ای'; text.innerText = 'شروع';
+        if (subTimer) subTimer.innerText = '';
+        circle.style.transform = 'scale(0.85)'; glow.style.transform = 'scale(0.8)';
+        return;
+      }
+      breathingActive = true; btn.innerText = 'توقف تمرین تنفس';
+      let step = 0;
+      function stepCycle() {
+        let secLeft = 4;
+        if (subTimer) subTimer.innerText = `${secLeft}s`;
+        clearInterval(breathingSecInterval);
+        breathingSecInterval = setInterval(() => { secLeft--; if (secLeft >= 1 && subTimer) subTimer.innerText = `${secLeft}s`; }, 1000);
+        if (step === 0) { text.innerText = 'دَم عمیق...'; circle.style.transform = 'scale(1.25)'; glow.style.transform = 'scale(1.35)'; step = 1; }
+        else if (step === 1) { text.innerText = 'حبس نفس...'; step = 2; }
+        else { text.innerText = 'بازدَم آرام...'; circle.style.transform = 'scale(0.85)'; glow.style.transform = 'scale(0.8)'; step = 0; }
+      }
+      stepCycle();
+      breathingInterval = setInterval(stepCycle, 4000);
+    }
+
+    let audioCtx = null, ambientNode = null, isAmbientPlaying = false;
+    function toggleAmbientSound() {
+      const btn = document.getElementById('btnAmbientNoise');
+      if (isAmbientPlaying) {
+        if (ambientNode) { try { ambientNode.stop(); } catch(e) {} ambientNode.disconnect(); }
+        isAmbientPlaying = false; btn.innerText = 'پخش صدای باران / نویز آرام';
+        return;
+      }
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const bufferSize = audioCtx.sampleRate * 3;
+        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        let lastOut = 0.0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          output[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = output[i];
+          output[i] *= 0.25;
+        }
+        ambientNode = audioCtx.createBufferSource();
+        ambientNode.buffer = noiseBuffer; ambientNode.loop = true;
+        const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 650;
+        ambientNode.connect(filter); filter.connect(audioCtx.destination);
+        ambientNode.start(0);
+        isAmbientPlaying = true; btn.innerText = '⏹ توقف صدای محیطی';
+      } catch (err) {}
+    }
+
+    function setPomoMode(mins, btn) {
+      clearInterval(pomoInterval); pomoRunning = false;
+      document.getElementById('btnPomoStart').innerText = 'شروع تمرکز';
+      document.querySelectorAll('.pomo-mode-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      currentPomoMins = mins; pomoTimeLeft = mins * 60;
+      document.getElementById('customPomoMinutes').value = mins;
+      updatePomoDisplay();
+    }
+    function setCustomPomoTime(val) {
+      let mins = Math.min(Math.max(parseInt(val) || 25, 1), 180);
+      setPomoMode(mins, null);
+    }
+    function updatePomoDisplay() {
+      const m = Math.floor(pomoTimeLeft / 60), s = pomoTimeLeft % 60;
+      document.getElementById('pomoTimerDisplay').innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      const bar = document.getElementById('pomoProgressBar');
+      if (bar) bar.style.width = `${(pomoTimeLeft / (currentPomoMins * 60)) * 100}%`;
+    }
+    function togglePomodoro() {
+      const btn = document.getElementById('btnPomoStart');
+      if (pomoRunning) { clearInterval(pomoInterval); pomoRunning = false; btn.innerText = 'ادامه تمرکز'; }
+      else {
+        pomoRunning = true; btn.innerText = 'توقف موقت';
+        pomoInterval = setInterval(() => {
+          if (pomoTimeLeft > 0) { pomoTimeLeft--; updatePomoDisplay(); }
+          else { clearInterval(pomoInterval); pomoRunning = false; btn.innerText = 'شروع تمرکز'; showToast('جلسه تمرکز به پایان رسید! 🎉'); }
+        }, 1000);
+      }
+    }
+    function resetPomodoro() { clearInterval(pomoInterval); pomoRunning = false; document.getElementById('btnPomoStart').innerText = 'شروع تمرکز'; pomoTimeLeft = currentPomoMins * 60; updatePomoDisplay(); }
+
+    document.getElementById('todoInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTodo(); } });
+    function renderTodos() {
+      const container = document.getElementById('todoList');
+      if (!container) return;
+      container.innerHTML = todos.map((t, idx) => `
+        <div class="todo-item ${t.done ? 'done' : ''}">
+          <div class="custom-check-label" onclick="toggleTodo(${idx})">
+            <div class="custom-check-box"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+            <span class="todo-text" style="font-size: 0.84rem;">${t.text}</span>
+          </div>
+          <button class="btn-icon btn-delete" onclick="deleteTodo(${idx})">✕</button>
+        </div>
+      `).join('');
+      document.getElementById('todoCount').innerText = `${todos.filter(t => !t.done).length} باقی‌مانده`;
+      updateHomeDashboardStats();
+    }
+    function addTodo() {
+      const input = document.getElementById('todoInput');
+      if (!input.value.trim()) return;
+      todos.push({ text: input.value.trim(), done: false });
+      input.value = '';
+      localStorage.setItem('iut_lounge_todos_v2', JSON.stringify(todos));
+      renderTodos();
+    }
+    function toggleTodo(idx) { todos[idx].done = !todos[idx].done; localStorage.setItem('iut_lounge_todos_v2', JSON.stringify(todos)); renderTodos(); }
+    function deleteTodo(idx) { todos.splice(idx, 1); localStorage.setItem('iut_lounge_todos_v2', JSON.stringify(todos)); renderTodos(); }
+
+    function saveScratchpad() {
+      const val = document.getElementById('scratchpadArea').value;
+      localStorage.setItem('iut_lounge_scratchpad_v2', val);
+      document.getElementById('scratchpadCounter').innerText = `${val.length} کاراکتر (ذخیره شد)`;
+    }
+    function loadScratchpad() {
+      const saved = localStorage.getItem('iut_lounge_scratchpad_v2');
+      if (saved) document.getElementById('scratchpadArea').value = saved;
+    }
+
+    /* آمار زنده میز کار */
+    function updateHomeDashboardStats() {
+      let u = 0, pts = 0;
+      const termsToCalc = gpaState.mode === 'term' ? [gpaState.terms[0]] : gpaState.terms;
+      termsToCalc.forEach(t => {
+        if (!t || !t.courses) return;
+        t.courses.forEach(c => {
+          if (!c.withdrawn && c.grade !== '' && c.grade !== null && !isNaN(c.grade)) {
+            const units = parseInt(c.units) || 1;
+            u += units; pts += Math.min(Math.max(parseFloat(c.grade), 0), 20) * units;
+          }
+        });
+      });
+      const gpaEl = document.getElementById('homeStatGpa');
+      if (gpaEl) gpaEl.innerText = u > 0 ? `${(pts / u).toFixed(2)} / 20` : '-- / 20';
+
+      const plan = getActivePlan();
+      const totalU = plan.courses.reduce((acc, c) => acc + (parseInt(c.units) || 0), 0);
+      const unitsEl = document.getElementById('homeStatUnits');
+      if (unitsEl) unitsEl.innerText = `${totalU} واحد (${plan.name})`;
+
+      const byCat = computePassedUnitsByCategory();
+      const totalPassed = Object.values(byCat).reduce((a, b) => a + b, 0);
+      const degPct = Math.min(100, Math.round((totalPassed / (degreeConfig.totalTarget || 140)) * 100));
+      const degEl = document.getElementById('homeStatDegree');
+      if (degEl) degEl.innerText = `${degPct}% (${totalPassed} واحد)`;
+
+      const dlEl = document.getElementById('homeStatDeadlines');
+      const navBadge = document.getElementById('navDeadlineBadge');
+      if (dlEl) dlEl.innerText = `${deadlinesList.length} مورد`;
+      if (navBadge) navBadge.innerText = deadlinesList.length;
+    }
+
+    function exportAllUserData() {
+      const data = {
+        gpa: localStorage.getItem('academic_assistant_state_v6'),
+        plans: localStorage.getItem('iut_schedule_plans_v3'),
+        activePlan: localStorage.getItem('iut_active_plan_id'),
+        degree: localStorage.getItem('iut_degree_chart_v1'),
+        deadlines: localStorage.getItem('iut_deadlines_v1'),
+        professors: localStorage.getItem('iut_professors_v1'),
+        cheatsheet: localStorage.getItem('iut_cheatsheet_v1'),
+        todos: localStorage.getItem('iut_lounge_todos_v2'),
+        scratchpad: localStorage.getItem('iut_lounge_scratchpad_v2')
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `IUT_Suite_Backup_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      showToast('فایل پشتیبان جامع دانلود شد 💾');
+    }
+
+    function importAllUserData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data.gpa) localStorage.setItem('academic_assistant_state_v6', data.gpa);
+          if (data.plans) localStorage.setItem('iut_schedule_plans_v3', data.plans);
+          if (data.activePlan) localStorage.setItem('iut_active_plan_id', data.activePlan);
+          if (data.degree) localStorage.setItem('iut_degree_chart_v1', data.degree);
+          if (data.deadlines) localStorage.setItem('iut_deadlines_v1', data.deadlines);
+          if (data.professors) localStorage.setItem('iut_professors_v1', data.professors);
+          if (data.cheatsheet) localStorage.setItem('iut_cheatsheet_v1', data.cheatsheet);
+          if (data.todos) localStorage.setItem('iut_lounge_todos_v2', data.todos);
+          if (data.scratchpad !== undefined) localStorage.setItem('iut_lounge_scratchpad_v2', data.scratchpad);
+          location.reload();
+        } catch (err) { showToast('فایل پشتیبان معتبر نیست!'); }
+      };
+      reader.readAsText(file);
+    }
+
+    initGpaData();
+    renderPlanTabs();
+    renderSchedule();
+    renderSessionsBuilder();
+    renderDegreeChart();
+    renderDeadlines();
+    renderProfessors();
+    generateOfficialEmail();
+    populateConverterUnits();
+    renderCheatSheet();
+    initLounge();
+    checkDiningAlert();
+    updateHomeDashboardStats();
+  </script>
+</body>
+</html>
